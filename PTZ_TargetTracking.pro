@@ -17,19 +17,19 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    MyThread.cpp \
-    PTZComm.cpp \
     stdafx.cpp \
-    info.cpp \
-    targetTracking.cpp
+    targetTracking.cpp \
+    information_feedback_class.cpp \
+    my_serialport_class.cpp \
+    PTZ_command_class.cpp
 
 HEADERS  += mainwindow.h \
-    MyThread.h \
-    PTZComm.h \
     stdafx.h \
     targetver.h \
-    info.h \
-    targetTracking.h
+    targetTracking.h \
+    information_feedback_class.h \
+    my_serialport_class.h \
+    PTZ_command_class.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include

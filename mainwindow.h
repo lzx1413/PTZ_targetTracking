@@ -14,11 +14,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void startTracking();
-    targetTracking *target;
+    void StartTracking();
+    TargetTracking *target_;
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui_;
 
 };
 

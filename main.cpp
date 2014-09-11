@@ -8,8 +8,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
-    w.target->ptzComm->Home();
-    w.target->ptzComm->comm->sleep(2);
+    w.target_->ptz_command_->Home();
+   // w.target_->ptz_command_->my_serial_port->sleep(2);
    // w.target->test();
    //  w.startTracking();
 //    targetTracking track;

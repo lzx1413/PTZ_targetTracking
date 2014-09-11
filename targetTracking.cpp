@@ -1,81 +1,79 @@
 #include "targetTracking.h"
-Rect selection;
-bool selectObject = false;
-Point origin;
-Mat image;
-int trackObject = 0 ;
-void targetTracking::test()
+Rect g_selection;
+bool g_selectObject = false;
+Point g_origin;
+Mat g_image = Mat::zeros(640, 640, CV_8UC3);
+int g_trackObject = 0 ;
+void TargetTracking::test()
 {
+    int x = 0;
     for(int i = 0;i<1000;i++)
     {
-    ptzComm->Left();
-    ptzComm->comm->msleep(50);
-    ptzComm->Stop();
-    ptzComm->comm->msleep(50);
-    ptzComm->Right();
-    ptzComm->comm->msleep(50);
-    ptzComm->Stop();
-    ptzComm->comm->msleep(50);
+
+      ptz_command_->PTZcontrol(Point(320,240),Point(x,240),2);
+      x = x+100;
+      if(x>640)
+          x = 0;
+      waitKey(1000);
     }
 
 }
-static void onMouse(int event, int x, int y, int, void*)
+static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 {
-    if (selectObject)
+    if (g_selectObject)
     {
-        selection.x = MIN(x, origin.x);
-        selection.y = MIN(y, origin.y);
-        selection.width = std::abs(x - origin.x);
-        selection.height = std::abs(y - origin.y);
+        g_selection.x = MIN(x, g_origin.x);
+        g_selection.y = MIN(y, g_origin.y);
+        g_selection.width = std::abs(x - g_origin.x);
+        g_selection.height = std::abs(y - g_origin.y);
 
-        selection &= Rect(0, 0, image.cols, image.rows);
+        g_selection &= Rect(0, 0, g_image.cols, g_image.rows);
        // frameNum = -1;
-      //  minWidth = selection.width;
-        //minHeight = selection.height;
+       // minWidth = selection.width;
+       //minHeight = selection.height;
     }
 
     switch (event)
     {
     case CV_EVENT_LBUTTONDOWN:
-        origin = Point(x, y);
-        selection = Rect(x, y, 0, 0);
-        selectObject = true;
+        g_origin = Point(x, y);
+        g_selection = Rect(x, y, 0, 0);
+        g_selectObject = true;
         break;
     case CV_EVENT_LBUTTONUP:
-        selectObject = false;
-        if (selection.width > 0 && selection.height > 0)
-            trackObject = -1;
+        g_selectObject = false;
+        if (g_selection.width > 0 && g_selection.height > 0)
+            g_trackObject = -1;
         break;
     }
 }
 
-targetTracking::targetTracking()
+TargetTracking::TargetTracking()
 {
-    backprojMode = false;
-    showHist = true;
-    vmin = 10 ;
-    vmax = 256;
-    smin = 30;
-    ptzComm = new PTZComm;
-    oldPoint = Point(320,320);
+    backproj_mode_ = false;
+    show_hist_ = true;
+    vmin_ = 10 ;
+    vmax_ = 256;
+    smin_ = 30;
+    ptz_command_ = new PTZCommand;
+    old_point_ = Point(320,240);
+    exit_flag_ = false;
 
 }
-targetTracking::~targetTracking()
+TargetTracking::~TargetTracking()
 {
-    delete ptzComm;
+    delete ptz_command_;
 }
 
-
-
-void targetTracking::drawCross( Point center, Scalar color,int d )
+void TargetTracking::DrawCross( Point center, Scalar color,int d )
 {
-  line(  image, Point( center.x - d, center.y - d ),
+  line(  g_image, Point( center.x - d, center.y - d ),
     Point( center.x + d, center.y + d ), color, 2, CV_AA, 0);
-  line(  image, Point( center.x + d, center.y - d ),
+  line(  g_image, Point( center.x + d, center.y - d ),
     Point( center.x - d, center.y + d ), color, 2, CV_AA, 0 );
 }
 
-int targetTracking:: iAbsolute(int a, int b)
+int TargetTracking:: iAbsolute(int a, int b)
 {
     int c = 0;
     if (a > b)
@@ -89,35 +87,35 @@ int targetTracking:: iAbsolute(int a, int b)
     return	c;
 }
 
-void targetTracking::ptzControl(Point oldPt, Point newPt)
+void TargetTracking::set_exit_flag()
 {
-    if(((newPt.x-oldPt.x)<5)&((newPt.y-oldPt.y)<5))
-        ptzComm->Stop();
-
+    if(exit_flag_ == false)
+      exit_flag_ =true;
 
 }
-int targetTracking::tracking()
+
+int TargetTracking::tracking()
 {
     VideoCapture cap;
     Rect trackWindow;
-    int hsize = 80;//越大越准确，同时计算量也越大
+    int hsize = 80;  //越大越准确，同时计算量也越大
     float hranges[] = { 0, 180 };
     const float* phranges = hranges;
 
   //  CommandLineParser parser(argc, argv, keys);
-    /*************Particle************************************/
+    /*************粒子滤波初始化************************************/
     Mat_<float> measurement(2,1);
     measurement.setTo(cv::Scalar(0));
     int dim = 2;
     int nParticles = 200;
-    float xRange = 640.0;
-    float yRange = 640.0;
+    float x_range = 640.0;
+    float y_range = 480.0;
 
-    float minRange[] = { 0, 0 };
-    float maxRange[] = { xRange, yRange };
+    float min_range[] = { 0, 0 };
+    float max_range[] = { x_range, y_range };
     CvMat LB, UB;
-    cvInitMatHeader(&LB, 2, 1, CV_32FC1, minRange);
-    cvInitMatHeader(&UB, 2, 1, CV_32FC1, maxRange);
+    cvInitMatHeader(&LB, 2, 1, CV_32FC1, min_range);
+    cvInitMatHeader(&UB, 2, 1, CV_32FC1, max_range);
 
     CvConDensation* condens = cvCreateConDensation(dim, dim, nParticles);
 
@@ -126,7 +124,7 @@ int targetTracking::tracking()
     condens->DynamMatr[1] = 0.0;
     condens->DynamMatr[2] = 0.0;
     condens->DynamMatr[3] = 1.0;
-    cap.open(0);
+    cap.open(0);//打开摄像头
     if (!cap.isOpened())
     {
         //help();
@@ -143,9 +141,15 @@ int targetTracking::tracking()
  //   createTrackbar("Vmax", "CamShift Demo", &vmax, 256, 0);
   //  createTrackbar("Smin", "CamShift Demo", &smin, 256, 0);
 
-    Mat frame, hsv, hue, mask, hist, histimg = Mat::zeros(640, 640, CV_8UC3), backproj;
+    Mat frame = Mat::zeros(640, 480, CV_8UC3);;
+    Mat hsv = Mat::zeros(640, 480, CV_8UC3);;
+    Mat hue = Mat::zeros(640, 480, CV_8UC3);;
+    Mat mask = Mat::zeros(640, 480, CV_8UC3);;
+    Mat hist = Mat::zeros(640, 480, CV_8UC3);;
+    Mat histimg = Mat::zeros(640, 480, CV_8UC3);
+    Mat backproj;
     bool paused = false;
-    int frameNum = 0;
+    int frame_num = 0;
     for (;;)
     {
 
@@ -158,33 +162,33 @@ int targetTracking::tracking()
         //if (frameNUm == 50)
         //	waitKey(0)
         //frame.copyTo(image);
-        GaussianBlur(frame,image,Size(1,1),0,0);
+        GaussianBlur(frame,g_image,Size(1,1),0,0);
 
 
         if (!paused)
         {
-            cvtColor(image, hsv, COLOR_BGR2HSV);//转换到hsv空间
+            cvtColor(g_image, hsv, COLOR_BGR2HSV);//转换到hsv空间
 
-            if (trackObject)//已经选择好跟踪对象
+            if (g_trackObject)//已经选择好跟踪对象
             {
-                frameNum++;
-                int _vmin = vmin, _vmax = vmax;
+                frame_num++;
+                int _vmin = vmin_, _vmax = vmax_;
 
-                inRange(hsv, Scalar(0, smin, MIN(_vmin, _vmax)),
+                inRange(hsv, Scalar(0, smin_, MIN(_vmin, _vmax)),
                     Scalar(180, 256, MAX(_vmin, _vmax)), mask);
                 imshow("mask", mask);
                 int ch[] = { 0, 0 };
                 hue.create(hsv.size(), hsv.depth());
                 mixChannels(&hsv, 1, &hue, 1, ch, 1);
                 //提取出h 分量
-                if (trackObject < 0)//计算选择目标的内的特征
+                if (g_trackObject < 0)//计算选择目标的内的特征
                 {
-                    Mat roi(hue, selection), maskroi(mask, selection);
+                    Mat roi(hue, g_selection), maskroi(mask, g_selection);
                     calcHist(&roi, 1, 0, maskroi, hist, 1, &hsize, &phranges);//计算直方图
                     normalize(hist, hist, 0, 255, CV_MINMAX);//直方图归一化
 
-                    trackWindow = selection;
-                    trackObject = 1;
+                    trackWindow = g_selection;
+                    g_trackObject = 1;
 
                     histimg = Scalar::all(0);
                     int binW = histimg.cols / hsize;
@@ -205,36 +209,36 @@ int targetTracking::tracking()
                 calcBackProject(&hue, 1, 0, hist, backproj, &phranges);//计算反向投影图
                 backproj &= mask;
                 RotatedRect trackBox = CamShift(backproj, trackWindow,
-                    TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));//最后一个参数是迭代停止的标准
+                TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));//camshift主函数，最后一个参数是迭代停止的标准
                 cout<<trackBox.center.x<<" "<<trackBox.center.y<<endl;
                 cout<<trackWindow.x<<" "<<trackWindow.y<<endl;
                 //if(frameNum = -1 )
                   //  oldPoint = trackBox.center;
                // frameNum = frameNum + 2;
-                if(frameNum ==40)
-                {
-                    frameNum = 0;
-                    ptzComm->PTZcontrol(oldPoint,trackBox.center);
-                }
+
+                 ptz_command_->PTZcontrol(old_point_,trackBox.center,frame_num);
+
                 //oldPoint = trackBox.center;
-                /**********Particle****************************************************/
+                /**********粒子滤波及其更新**********************/
                 measurement(0)=trackBox.center.x;
                 measurement(1)=trackBox.center.y;
                 for (int i = 0; i < condens->SamplesNum; i++)
                 {
 
-                   float diffX = (measurement(0) - condens->flSamples[i][0])/xRange;
-                   float diffY = (measurement(1) - condens->flSamples[i][1])/yRange;
+                   float diffX = (measurement(0) - condens->flSamples[i][0])/x_range;
+                   float diffY = (measurement(1) - condens->flSamples[i][1])/y_range;
                    condens->flConfidence[i] = 1.0 / (sqrt(diffX * diffX + diffY * diffY));
                    Point partPt(condens->flSamples[i][0], condens->flSamples[i][1]);
-                   drawCross(partPt , Scalar(255,0,255), 2);
+                   DrawCross(partPt , Scalar(255,0,255), 2);
                 }
                 cvConDensUpdateByTime(condens);
                 Point statePt(condens->State[0], condens->State[1]);
-                circle( image,statePt,5,CV_RGB(0,0,255),3);
+                circle( g_image,statePt,5,CV_RGB(0,0,255),3);
+                circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
+                circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
 
 
-                if (trackWindow.area() <= 1)
+                if (trackWindow.area() <= 10)
                 {
 //                    int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
 //                    trackWindow = Rect(trackWindow.x - r, trackWindow.y - r,
@@ -364,40 +368,44 @@ int targetTracking::tracking()
 //                        {
 //                            trackWindow.height = 480 - trackWindow.y;
 //                        }
-                if (backprojMode)
-                    cvtColor(backproj, image, COLOR_GRAY2BGR);
-                ellipse(image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
+                if (backproj_mode_)
+                    cvtColor(backproj, g_image, COLOR_GRAY2BGR);
+                ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
 
         }
-        else if (trackObject < 0)
+        else if (g_trackObject < 0)
             paused = false;
 
-        if (selectObject && selection.width > 0 && selection.height > 0)
+        if (g_selectObject && g_selection.width > 0 && g_selection.height > 0)
         {
-            Mat roi(image, selection);
+            Mat roi(g_image, g_selection);
             bitwise_not(roi, roi);//黑白反转
         }
 
 
-
-        imshow("TargetTracking", image);
+        imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
 
-        char c = (char)waitKey(10);
+        if(exit_flag_ == true)
+        {
+            exit_flag_ = false;
+            break;
+        }
+        char c = (char)waitKey(3);
         if (c == 27)
             break;
         switch (c)
         {
         case 'b':
-            backprojMode = !backprojMode;
+            backproj_mode_ = !backproj_mode_;
             break;
         case 'c':
-            trackObject = 0;
+            g_trackObject = 0;
             histimg = Scalar::all(0);
             break;
         case 'h':
-            showHist = !showHist;
-            if (!showHist)
+            show_hist_ = !show_hist_;
+            if (!show_hist_)
                 destroyWindow("Histogram");
             else
                 namedWindow("Histogram", 1);
@@ -412,5 +420,10 @@ int targetTracking::tracking()
 
 
 }
+  destroyWindow("TargetTracking");
+  destroyWindow("mask");
+  destroyWindow("Histogram");
+  g_selectObject = false;
+  g_trackObject = 0 ;
 return 0;
 }
