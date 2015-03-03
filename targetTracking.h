@@ -17,6 +17,7 @@ public:
     TargetTracking();
     ~TargetTracking();
     int tracking();  //追踪主函数
+    int tracking2();
     void test();  //测试ptz控制算法函数
     void set_exit_flag();
     PTZCommand *ptz_command_;
@@ -33,11 +34,5 @@ private:
     int exit_flag_;  //退出循环的标志
     void DrawCross( Point center, Scalar color,int d );  //画粒子
     int  iAbsolute(int a, int b);  //作差求绝对值
-
-
-
-
 };
-
-
 #endif // TARGETRACKING_H

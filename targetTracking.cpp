@@ -1,9 +1,11 @@
 #include "targetTracking.h"
+#include"CompressiveTracker.h"
 Rect g_selection;
 bool g_selectObject = false;
 Point g_origin;
 Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 int g_trackObject = 0 ;
+bool drawing_box = false;
 void TargetTracking::test()
 {
     int x = 0;
@@ -18,9 +20,43 @@ void TargetTracking::test()
     }
 
 }
+void mouseHandler(int event, int x, int y, int flags, void *param)
+{
+    switch (event)
+    {
+    case CV_EVENT_MOUSEMOVE:
+        if (drawing_box)
+        {
+            g_selection.width = x - g_selection.x;
+            g_selection.height = y - g_selection.y;
+        }
+        break;
+    case CV_EVENT_LBUTTONDOWN:
+        drawing_box = true;
+        g_selection = Rect(x, y, 0, 0);
+        g_selectObject = true;
+        break;
+    case CV_EVENT_LBUTTONUP:
+        drawing_box = false;
+        if (g_selection.width < 0)
+        {
+            g_selection.x += g_selection.width;
+            g_selection.width *= -1;
+        }
+        if( g_selection.height < 0 )
+        {
+            g_selection.y += g_selection.height;
+            g_selection.height *= -1;
+        }
+        g_selectObject = true;
+        break;
+    default:
+        break;
+    }
+}
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 {
-    if (g_selectObject)
+    if (!g_selectObject)
     {
         g_selection.x = MIN(x, g_origin.x);
         g_selection.y = MIN(y, g_origin.y);
@@ -38,10 +74,10 @@ static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取�
     case CV_EVENT_LBUTTONDOWN:
         g_origin = Point(x, y);
         g_selection = Rect(x, y, 0, 0);
-        g_selectObject = true;
+        g_selectObject = false;
         break;
     case CV_EVENT_LBUTTONUP:
-        g_selectObject = false;
+        g_selectObject = true;
         if (g_selection.width > 0 && g_selection.height > 0)
             g_trackObject = -1;
         break;
@@ -101,8 +137,6 @@ int TargetTracking::tracking()
     int hsize = 80;  //越大越准确，同时计算量也越大
     float hranges[] = { 0, 180 };
     const float* phranges = hranges;
-
-  //  CommandLineParser parser(argc, argv, keys);
     /*************粒子滤波初始化************************************/
     Mat_<float> measurement(2,1);
     measurement.setTo(cv::Scalar(0));
@@ -127,10 +161,8 @@ int TargetTracking::tracking()
     cap.open(0);//打开摄像头
     if (!cap.isOpened())
     {
-        //help();
         cout << "***Could not initialize capturing...***\n";
         cout << "Current parameter's value: \n";
-        //parser.printParams();
         return -1;
     }
 
@@ -141,11 +173,11 @@ int TargetTracking::tracking()
  //   createTrackbar("Vmax", "CamShift Demo", &vmax, 256, 0);
   //  createTrackbar("Smin", "CamShift Demo", &smin, 256, 0);
 
-    Mat frame = Mat::zeros(640, 480, CV_8UC3);;
-    Mat hsv = Mat::zeros(640, 480, CV_8UC3);;
-    Mat hue = Mat::zeros(640, 480, CV_8UC3);;
-    Mat mask = Mat::zeros(640, 480, CV_8UC3);;
-    Mat hist = Mat::zeros(640, 480, CV_8UC3);;
+    Mat frame = Mat::zeros(640, 480, CV_8UC3);
+    Mat hsv = Mat::zeros(640, 480, CV_8UC3);
+    Mat hue = Mat::zeros(640, 480, CV_8UC3);
+    Mat mask = Mat::zeros(640, 480, CV_8UC3);
+    Mat hist = Mat::zeros(640, 480, CV_8UC3);
     Mat histimg = Mat::zeros(640, 480, CV_8UC3);
     Mat backproj;
     bool paused = false;
@@ -159,12 +191,7 @@ int TargetTracking::tracking()
             if (frame.empty())
                 break;
         }
-        //if (frameNUm == 50)
-        //	waitKey(0)
-        //frame.copyTo(image);
         GaussianBlur(frame,g_image,Size(1,1),0,0);
-
-
         if (!paused)
         {
             cvtColor(g_image, hsv, COLOR_BGR2HSV);//转换到hsv空间
@@ -195,7 +222,7 @@ int TargetTracking::tracking()
                     Mat buf(1, hsize, CV_8UC3);
                     for (int i = 0; i < hsize; i++)
                         buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i*180. / hsize), 255, 255);
-                    cvtColor(buf, buf, CV_HSV2BGR);//画出直方图
+                    //cvtColor(buf, buf, CV_HSV2BGR);//画出直方图
 
                     for (int i = 0; i < hsize; i++)
                     {
@@ -234,7 +261,7 @@ int TargetTracking::tracking()
                 cvConDensUpdateByTime(condens);
                 Point statePt(condens->State[0], condens->State[1]);
                 circle( g_image,statePt,5,CV_RGB(0,0,255),3);
-                circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
+                //circle( g_image,trackg_selection.center,5,CV_RGB(0,255,0),3);
                 circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
 
 
@@ -246,128 +273,6 @@ int TargetTracking::tracking()
 //                        Rect(0, 0, cols, rows);//赋值给下一次查找的区域
                      trackWindow = Rect(statePt.x,statePt.y,100,100)&Rect(0,0,640,640);
                 }
-//                int iBetween = 0;
-//                        //确保预测点 与 实际点之间 连线距离 在 本次 trackBox 的size 之内
-//                 iBetween = sqrt(powf((statePt.x - trackBox.center.x),2)
-//                            +
-//                            powf((statePt.y - trackBox.center.y),2) );
-
-//                        Point prePoint;//预测的点 相对于 实际点 的对称点
-
-
-
-//                        if ( iBetween > 5)
-//                        {
-//                            //当实际点 在 预测点 右边
-//                            if (trackBox.center.x > statePt.x)
-//                            {
-//                                //且，实际点在 预测点 下面
-//                                if (trackBox.center.y > statePt.y)
-//                                {
-//                                    prePoint.x = trackBox.center.x + iAbsolute(trackBox.center.x,statePt.x);
-//                                    prePoint.y = trackBox.center.y + iAbsolute(trackBox.center.y,statePt.y);
-//                                }
-//                                //且，实际点在 预测点 上面
-//                                else
-//                                {
-//                                    prePoint.x = trackBox.center.x + iAbsolute(trackBox.center.x,statePt.x);
-//                                    prePoint.y = trackBox.center.y - iAbsolute(trackBox.center.y,statePt.y);
-//                                }
-//                                //宽高
-//                                if (trackWindow.width != 0)
-//                                {
-//                                    trackWindow.width += iBetween + iAbsolute(trackBox.center.x,statePt.x);
-//                                }
-
-//                                if (trackWindow.height != 0)
-//                                {
-//                                    trackWindow.height += iBetween + iAbsolute(trackBox.center.x,statePt.x);
-//                                }
-//                            }
-//                            //当实际点 在 预测点 左边
-//                            else
-//                            {
-//                                //且，实际点在 预测点 下面
-//                                if (trackBox.center.y > statePt.y)
-//                                {
-//                                    prePoint.x = trackBox.center.x - iAbsolute(trackBox.center.x,statePt.x);
-//                                    prePoint.y = trackBox.center.y + iAbsolute(trackBox.center.y,statePt.y);
-//                                }
-//                                //且，实际点在 预测点 上面
-//                                else
-//                                {
-//                                    prePoint.x = trackBox.center.x - iAbsolute(trackBox.center.x,statePt.x);
-//                                    prePoint.y = trackBox.center.y - iAbsolute(trackBox.center.y,statePt.y);
-//                                }
-//                                //宽高
-//                                if (trackWindow.width != 0)
-//                                {
-//                                    trackWindow.width += iBetween + iAbsolute(trackBox.center.x,statePt.x);
-//                                }
-
-//                                if (trackWindow.height != 0)
-//                                {
-//                                    trackWindow.height += iBetween +iAbsolute(trackBox.center.x,statePt.x);
-//                                }
-//                            }
-
-//                            trackWindow.x = prePoint.x - iBetween;
-//                            trackWindow.y = prePoint.y - iBetween;
-//                        }
-//                        else
-//                        {
-//                            trackWindow.x -= iBetween;
-//                            trackWindow.y -= iBetween;
-//                            //宽高
-//                            if (trackWindow.width != 0)
-//                            {
-//                                trackWindow.width += iBetween;
-//                            }
-
-//                            if (trackWindow.height != 0)
-//                            {
-//                                trackWindow.height += iBetween;
-//                            }
-//                        }
-
-//                        //跟踪的矩形框不能小于初始化检测到的大小，当这个情况的时候，X 和 Y可以适当的在缩小
-//                        if (trackWindow.width < minWidth)
-//                        {
-//                            trackWindow.width = minWidth;
-//                            trackWindow.x -= iBetween;
-//                        }
-//                        if (trackWindow.height < minHeight)
-//                        {
-//                            trackWindow.height = minHeight;
-//                            trackWindow.y -= iBetween;
-//                        }
-
-//                        //确保调整后的矩形大小在640 * 480之内
-//                        if (trackWindow.x <= 0)
-//                        {
-//                            trackWindow.x = 0;
-//                        }
-//                        if (trackWindow.y <= 0)
-//                        {
-//                            trackWindow.y = 0;
-//                        }
-//                        if (trackWindow.x >= 600)
-//                        {
-//                            trackWindow.x = 600;
-//                        }
-//                        if (trackWindow.y >= 440)
-//                        {
-//                            trackWindow.y = 440;
-//                        }
-
-//                        if (trackWindow.width + trackWindow.x >= 640)
-//                        {
-//                            trackWindow.width = 640 - trackWindow.x;
-//                        }
-//                        if (trackWindow.height + trackWindow.y >= 480)
-//                        {
-//                            trackWindow.height = 480 - trackWindow.y;
-//                        }
                 if (backproj_mode_)
                     cvtColor(backproj, g_image, COLOR_GRAY2BGR);
                 ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
@@ -385,6 +290,7 @@ int TargetTracking::tracking()
 
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
+       // imshow("asdf",g_image);
 
         if(exit_flag_ == true)
         {
@@ -427,3 +333,90 @@ int TargetTracking::tracking()
   g_trackObject = 0 ;
 return 0;
 }
+ int TargetTracking::tracking2()
+ {
+         bool paused = false;
+         Mat frame = Mat::zeros(320, 240, CV_8UC3);
+         VideoCapture cap;
+         cap.open(0);
+         if (!cap.isOpened())
+         {
+             cout << "capture device failed to open!" << endl;
+             return -1;
+         }
+         // Register mouse callback to draw the tracking g_selection
+         namedWindow("CT", 0);
+         setMouseCallback("CT", onMouse, 0);
+         // CT framework
+         CompressiveTracker ct;
+         Mat last_gray;
+         Mat current_gray;
+         cap.set(CV_CAP_PROP_FRAME_WIDTH, 340);
+         cap.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
+
+        while(1)
+        {
+             // Initialization
+                 if(!paused)
+                 {
+                   cap >> frame;
+                   if(frame.empty())
+                       break;
+                 }
+                 if(!paused)
+                 {
+
+
+            // Remove callback
+            //  setMouseCallback("CT", NULL, NULL);
+
+             if(g_trackObject )
+             {
+                 cvtColor(frame, last_gray, CV_RGB2GRAY);
+                 rectangle(frame, g_selection, Scalar(0, 0, 255));
+
+                  ct.init(last_gray, g_selection);
+                 // get frame
+                 cvtColor(frame, current_gray, CV_RGB2GRAY);
+                 // Process Frame
+                 ct.processFrame(current_gray, g_selection);
+                 // Draw Points
+                 rectangle(frame, g_selection, Scalar(0, 0, 255));
+                 // Display
+
+                 //printf("Current Tracking g_selection = x:%d y:%d h:%d w:%d\n", g_selection.x, g_selection.y, g_selection.width, g_selection.height);
+
+                 //if (cvWaitKey(33) == 'q') {	break; }
+             }
+             else if(g_trackObject<0)
+                 paused = false;
+             imshow("CT", frame);
+             cvWaitKey(1);
+             if(exit_flag_ == true)
+             {
+                 exit_flag_ = false;
+                 break;
+             }
+             char c = (char)waitKey(3);
+             switch(c)
+             {
+             case 'q':
+                 break;
+             case'p':
+                 paused = !paused;
+                 break;
+             default:
+                 break;
+             }
+
+            }
+
+
+        }
+         destroyWindow("CT");
+         g_selectObject = false;
+         g_trackObject = 0 ;
+
+         return 0;
+
+ }

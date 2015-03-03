@@ -2,6 +2,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QDebug>
 #include <QDateTime>
+#include <iostream>
+using namespace std;
 PTZCommand::PTZCommand()
 {
     my_serial_port = new MySerialPort;
@@ -26,10 +28,10 @@ PTZCommand::~PTZCommand()
 void PTZCommand::CommInit()
 {
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
-	{
-		qDebug() << "Name        : " << info.portName();
-		qDebug() << "Description : " << info.description();
-		qDebug() << "Manufacturer: " << info.manufacturer();
+    {
+        qDebug() << "Name        : " << info.portName();
+        qDebug() << "Description : " << info.description();
+        qDebug() << "Manufacturer: " << info.manufacturer();
         this-> my_serial_port->information_.InfoDisplay(info.portName()+"\n"+info.description()+"\n"+ info.manufacturer()+"\n");
 
 
@@ -38,11 +40,11 @@ void PTZCommand::CommInit()
 
     } // 查找所有可用串口
     my_serial_port->StartCom();
-	qDebug() << "Thread starting" << endl;
+    qDebug() << "Thread starting" << endl;
     my_serial_port->ChangeComState(false);
     my_serial_port->start();  //串口线程开始
     qDebug() <<tr( "com has opened" )<< endl;
-    
+
 }
 
 void PTZCommand::PTZ_Init()
@@ -93,7 +95,9 @@ void PTZCommand::Home(void)
 
 void PTZCommand::AutoLeft(bool is_stop,int stop_time )
 {
-   // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00,0x60, 0x31,0x30, 0xEF };
+   Stop();
+   //waitKey(15);
+    // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00,0x60, 0x31,0x30, 0xEF };
     //PanSpeedSet(200);
     this->my_serial_port->msleep(5);
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
@@ -118,6 +122,8 @@ void PTZCommand::AutoLeft(bool is_stop,int stop_time )
 
 void PTZCommand::AutoRight(bool is_stop ,int stop_time)
 {
+   Stop();
+    //waitKey(15);
     //char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x32, 0x30, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x31, 0xEF };
     this->my_serial_port->tx_data_.clear();
@@ -140,7 +146,8 @@ void PTZCommand::AutoRight(bool is_stop ,int stop_time)
 void PTZCommand::AutoUp(bool is_stop ,int stop_time )
 {
 
-
+Stop();
+ //waitKey(15);
    // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x31, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x33, 0xEF };
     this->my_serial_port->tx_data_.clear();
@@ -163,7 +170,8 @@ void PTZCommand::AutoUp(bool is_stop ,int stop_time )
 void PTZCommand::AutoDown(bool is_stop ,int stop_time )
 {
 
-
+Stop();
+ //waitKey(15);
     //char command_data[8]= { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x32, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x34, 0xEF };
     this->my_serial_port->tx_data_.clear();
@@ -390,7 +398,7 @@ void PTZCommand::FocusNear(void)//聚焦于近点
 }
 void PTZCommand::FocusSetMF(void)//调节为手动对焦模式
 {
-	
+
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA1, 0x31, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
@@ -831,7 +839,7 @@ int PTZCommand::GetPTZFocusPos(void)
         return 0;
     }
 
-	
+
 
     return focuspos;
 }
@@ -892,215 +900,179 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
 
 
 }
-	
+
 void PTZCommand::PTZcontrol(Point oldPoint, Point newPoint,int frame_num)
 {
+    static int pan_intg,tilt_intg;
     int pan_speed;
     int tilt_speed;
-    if(frame_num == 1)
+    Point set_point_;
+    if(frame_num == 2)
+    {
+        last_x_state_2 = newPoint.x-oldPoint.x;
+        last_y_state_2 = newPoint.y-oldPoint.y;
+     }
+    else if(frame_num==4)
     {
         last_x_state_ = newPoint.x-oldPoint.x;
         last_y_state_ = newPoint.y-oldPoint.y;
-     }
-    else
-    {
-    if((abs(newPoint.x-oldPoint.x)<10)&&(abs(newPoint.y-oldPoint.y)<10))
-    {
-      Stop();
-      waitKey(20);
     }
     else
     {
-        if(abs(newPoint.x-oldPoint.x)<100)
+        now_x_state_ = newPoint.x-oldPoint.x;
+        now_y_state_ = newPoint.y-oldPoint.y;
+        pan_intg+=now_x_state_;
+        tilt_intg+=now_y_state_;
+        set_point_.x=now_x_state_+0.2*(now_x_state_-last_x_state_);//+0.2*(now_x_state_-2*last_x_state_+last_x_state_2);
+        set_point_.y=now_y_state_+0.2*(now_y_state_-last_y_state_);//+0.2*(now_y_state_-2*last_y_state_+last_y_state_2);
+        //set_point_.x=//0.75*now_x_state_*0.8*0.8+0.2*(now_x_state_-last_x_state_);//+0.01*pan_intg;
+
+        if((abs(now_x_state_)<10)&&(abs(now_y_state_)<10))
         {
-           pan_speed = (abs(newPoint.x-oldPoint.x)*1.25*0.8*2);
-        }
-        if(abs(newPoint.x-oldPoint.x)>=100)
-        {
-            pan_speed = (abs(newPoint.x-oldPoint.x)*1.25*0.6*2);
-        }
-        PanSpeedSet(pan_speed);
-       // my_serial_port->msleep(5);
-        waitKey(15);
-        if(abs(newPoint.y-oldPoint.y)<100)
-        {
-           tilt_speed = (abs(newPoint.y-oldPoint.y)*0.6*0.2);
+           Stop();
+           waitKey(20);
         }
         else
         {
-            tilt_speed = (abs(newPoint.y-oldPoint.y)*0.6*0.1);
-        }
-       // TiltSpeed = (abs(newPoint.y-oldPoint.y)*0.6*0.8);
-        TiltSpeedSet(50);
-        waitKey(15);
-//        if((newPoint.x-oldPoint.x)>0)
-//        {
-//            now_x_state_ = 1;
-//            if(last_x_state_*now_x_state_ == -1)
-//            {
-//                Stop();
-//               waitKey(60);
-//            }
-//             AutoRight(false,10);
-//       // comm->msleep(50);
-//      //  comm->stop();
-//       // comm->msleep(50);
-//        }
-//        if((newPoint.x - oldPoint.x) < 0)
-//        {
-//            now_x_state_ = -1;
-//            if(last_x_state_*now_x_state_ == -1)
-//            {
-//               Stop();
-//               waitKey(60);
-//            }
-//             AutoLeft(false,10);
-//        }
-        now_x_state_ = newPoint.x-oldPoint.x;
+            if(abs(now_x_state_)<50)
+            {
+                pan_speed = (abs(set_point_.x)*1.5*0.85);//0.5*2*2);
+            }
+            if(abs(now_x_state_)>=50)
+            {
+                pan_speed = (abs(set_point_.x)*1.25*0.85);//*0.3*2*2);
+            }
+            PanSpeedSet(pan_speed);
+            // my_serial_port->msleep(5);
+            waitKey(15);
+            if(abs(now_y_state_)<50)
+            {
+                tilt_speed = (abs(set_point_.y)*1.2*2*0.85*0.85);//*0.8*0.5*2);
+            }
+            else
+            {
+                tilt_speed = (abs(set_point_.y)*0.6*2*0.85*0.85);//*0.8*0.2*2);
+            }
+            // TiltSpeed = (abs(newPoint.y-oldPoint.y)*0.6*0.8);
+            TiltSpeedSet( tilt_speed);                                                     //Not modified?
+            waitKey(15);
 
-        if(last_x_state_*now_x_state_<0)
+
+    AutoTurn(now_x_state_,now_y_state_,last_x_state_,last_y_state_);
+
+    last_x_state_2=last_x_state_;
+    last_y_state_2=last_y_state_;
+    last_y_state_ = now_y_state_;
+    last_x_state_ = now_x_state_;//comm->stop();
+    }
+}
+}
+void PTZCommand::AutoTurn(int now_x,int now_y,int last_x,int last_y)
+{
+    if(abs(now_x)<abs(now_y))
+        {
+            if(last_x*now_x<0)
+            {
+                Stop();
+                waitKey(15);
+            }
+            if(now_x>0)
+            {
+                if((last_x>0)&&(now_x-last_x>10))
+                {
+                    Stop();
+                    waitKey(15);
+                }
+                AutoRight(false,5);
+            }
+            if(now_x<0)
+            {
+                if((last_x<0)&&(now_x-last_x<-10))
+                {
+                    Stop();
+                    waitKey(15);
+                }
+                AutoLeft(false,5);
+            }
+        }
+
+    //
+
+    if(last_y*now_y<0)
+            {
+                Stop();
+                waitKey(15);
+            }
+    if(now_y>0)
+            {
+                if((last_y>0)&&(now_y-last_y>10))
+                {
+                    Stop();
+                    waitKey(15);
+                }
+                AutoDown(false,5);
+            }
+
+    if(now_y<0)
+            {
+                if((last_y<0)&&(now_y-last_y<-10))
+                {
+                    Stop();
+                    waitKey(15);
+                }
+                AutoUp(false,5);
+            }
+
+
+    if(abs(now_x)>abs(now_y))
+    {
+        if(last_x*now_x<0)
         {
             Stop();
             waitKey(15);
         }
-        if(now_x_state_>0)
+        if(now_x>0)
         {
-            if((last_x_state_>0)&&(now_x_state_-last_x_state_>10))
+            if((last_x>0)&&(now_x-last_x>10))
             {
                 Stop();
                 waitKey(15);
             }
             AutoRight(false,5);
         }
-        if(now_x_state_<0)
+        if(now_x<0)
         {
-            if((last_x_state_<0)&&(now_x_state_-last_x_state_<-10))
+            if((last_x<0)&&(now_x-last_x<-10))
             {
                 Stop();
                 waitKey(15);
             }
             AutoLeft(false,5);
         }
-        last_x_state_ = now_x_state_;
-
-
-//        if((newPoint.y-oldPoint.y) > 0)
-//        {
-//            now_y_state_ = 1;
-//            if(last_y_state_*now_y_state_ == -1)
-//            {
-//                Stop();
-//                waitKey(50);
-//            }
-//             AutoDown(false,10);
-//        }
-//         if((newPoint.y-oldPoint.y) < 0)
-//         {
-//             now_x_state_ = -1;
-//             if(last_y_state_*now_y_state_ == -1)
-//             {
-//                 Stop();
-//                 waitKey(50);
-//             }
-//              AutoUp(false,10);
-//         }
-
-        now_y_state_ = newPoint.y-oldPoint.y;
-        if(last_y_state_*now_y_state_<0)
-        {
-            Stop();
-            waitKey(15);
-        }
-        if(now_y_state_>0)
-        {
-            if((last_y_state_>0)&&(now_y_state_-last_y_state_>10))
-            {
-                Stop();
-                waitKey(15);
-            }
-            AutoDown(false,5);
-        }
-        if(now_y_state_<0)
-        {
-            if((last_y_state_<0)&&(now_y_state_-last_y_state_<-10))
-            {
-                Stop();
-                waitKey(15);
-            }
-            AutoUp(false,5);
-        }
-         last_y_state_ = now_y_state_;
     }
-    //comm->stop();
-    }
+
 }
-
-/*根据当前鼠标的点击位置使得摄像头转到鼠标点击的位置*/
-/*暂时不需要这个功能*/
-//bool CPTZComm::ReturnPTZ(const CvPoint ClickedPoint)
-//{
- //  char ccpan_angle[5] = { 0 };
- //  char cctilt_angle[5] = { 0 };
- //  int i = 0;
-
- //  double Pixelrate = 15;
-//   double rotatecpan_angle = (359.5 - ClickedPoint.x) / Pixelrate;
-//   double rotatectilt_angle = (ClickedPoint.y - 239.5) / Pixelrate;
-
-  //rotate PTZ
- //  double curcpan_angle = GetPTZcpan_angle();
-//    if ((curcpan_angle >99.99) || (curcpan_angle <-99.99))
-//        return false;
-//    double curctilt_angle = GetPTZctilt_angle();
-//    if ((curctilt_angle >29.99) || (curctilt_angle <-29.99))
-//        return false;
-//    double set_cpan_angle = curcpan_angle - rotatecpan_angle;
-//    double set_ctilt_angle = curctilt_angle - rotatectilt_angle;
-
-//    int cpan_angle = (int)(set_cpan_angle / 0.1125 + 32768);
-//    _itoa(cpan_angle, ccpan_angle, 16);
-//    for (i = 0; i<5; i++)
-//        if ((ccpan_angle[i] >= 'a') && (ccpan_angle[i] <= 'z')) ccpan_angle[i] -= 32;
-
-//    int ctilt_angle = (int)(set_ctilt_angle / 0.1125 + 32768);
-//    _itoa(ctilt_angle, cctilt_angle, 16);
-//    for (i = 0; i<5; i++)
-//        if ((cctilt_angle[i] >= 'a') && (cctilt_angle[i] <= 'z')) cctilt_angle[i] -= 32;
-
-//    m_pCmdData[0] = 0xFF;
-//    m_pCmdData[1] = 0x30;
-//    m_pCmdData[2] = 0x30;
-//    m_pCmdData[3] = 0x00;
-//    m_pCmdData[4] = 0x62;
-
-//    memcpy(m_pCmdData + 5, ccpan_angle, 4);
-//    memcpy(m_pCmdData + 9, cctilt_angle, 4);
-//    m_pCmdData[13] = 0xEF;
-
-//    ClearBuf();
-//    Sleep(5);
-
-//    m_CmdLength = 14;
-
-//    try
-//    {
-//        SendData(m_pCmdData, m_CmdLength);
-//        /*
-//        Sleep(50);
-//        m_dPTZPanAng = GetPTZcpan_angle();
-//        m_dPTZctilt_angle = GetPTZctilt_angle();
-//        UpdateData(FALSE);
-//        */
-//        //return true;
-//    }
-//    catch (...)
-//    {
-//        // Inform the user if the hex string was not properly formatted
-//        AfxMessageBox("Write serial port error ");
-//        return false;
-//    }
-
-//}
-
-
-	
+void PTZCommand::AutoZoom(int height,int width)
+{
+int now_zoom=GetPTZZoomPos();
+float p_height=height/480,p_width=width/640;
+if(p_height<0.2&&p_width<0.2) ZoomSet(p_height*0.33/now_zoom);
+else if(p_height>0.5) ZoomSet(p_height*0.33/now_zoom);
+else if(p_width>0.5) ZoomSet(p_width*0.33/now_zoom);
+else ZoomStop();
+    /*if(height<100&&width<260)
+{
+    ZoomIn();
+    waitKey(15);
+    ZoomStop();
+}
+else if(height>380||width>540)
+{
+    ZoomOut();
+    waitKey(15);
+    ZoomStop();
+}
+else
+    ZoomStop();
+*/
+}

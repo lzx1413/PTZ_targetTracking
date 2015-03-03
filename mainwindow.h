@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include"targetTracking.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,7 +16,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void StartTracking();
-    TargetTracking *target_;
+   TargetTracking *target_;
+
 
 private:
     Ui::MainWindow *ui_;

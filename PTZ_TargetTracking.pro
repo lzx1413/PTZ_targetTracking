@@ -5,9 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT += serialport
+QT       += serialport
 CONFIG   += console
-RC_FILE += myico.rc
+RC_FILE  += myico.rc
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     targetTracking.cpp \
     information_feedback_class.cpp \
     my_serialport_class.cpp \
-    PTZ_command_class.cpp
+    PTZ_command_class.cpp \
+    CompressiveTracker.cpp \
+    RunTracker.cpp
 
 HEADERS  += mainwindow.h \
     stdafx.h \
@@ -29,7 +31,8 @@ HEADERS  += mainwindow.h \
     targetTracking.h \
     information_feedback_class.h \
     my_serialport_class.h \
-    PTZ_command_class.h
+    PTZ_command_class.h \
+    CompressiveTracker.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include

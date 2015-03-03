@@ -8,8 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->setupUi(this);
 //    ptzComm = new PTZComm;
     target_ = new TargetTracking;
-    target_->ptz_command_->CommInit();
-    target_-> ptz_command_->PTZ_Init();
+    //target_->ptz_command_->CommInit();
+    //target_-> ptz_command_->PTZ_Init();
     ui_->infoDisplay->setTextColor(QColor(255,255,255));
     ui_->infoDisplay->setTextBackgroundColor(QColor(0,0,0));
     QLabel *permanent  = new QLabel(this);
@@ -21,16 +21,20 @@ MainWindow::MainWindow(QWidget *parent) :
     /****************窗口美化部分***************************/
     //setWindowFlags(windowFlags() | Qt::FramelessWindowHint| Qt::WindowStaysOnTopHint);
     /****************窗口背景********************************/
-    QPixmap pixmap = QPixmap("D:/bg3.jpg").scaled(this->size());
+    QPixmap pixmap = QPixmap("D:/bg.jpg").scaled(this->size());
     QPalette palette(this->palette());
     palette.setBrush(QPalette::Background, QBrush(pixmap));
     this->setPalette(palette);
     /**********PT相关控制部分******************************/
     connect(this->ui_->PTZ_home,&QPushButton::clicked,target_->ptz_command_,&PTZCommand::Home);
-    connect(this->ui_->PTZ_left,&QPushButton::clicked,target_->ptz_command_,&PTZCommand::ManuLeft);
-    connect(this->ui_->PTZ_right,&QPushButton::clicked,target_->ptz_command_,&PTZCommand::ManuRight);
-    connect(this->ui_->PTZ_up,&QPushButton::clicked,target_->ptz_command_,&PTZCommand::ManuUp);
-    connect(this->ui_->PTZ_down,&QPushButton::clicked,target_->ptz_command_,&PTZCommand::ManuDown);
+    connect(this->ui_->PTZ_left,&QPushButton::pressed,target_->ptz_command_,&PTZCommand::ManuLeft);
+    connect(this->ui_->PTZ_left,&QPushButton::released,target_->ptz_command_,&PTZCommand::Stop);
+    connect(this->ui_->PTZ_right,&QPushButton::pressed,target_->ptz_command_,&PTZCommand::ManuRight);
+    connect(this->ui_->PTZ_right,&QPushButton::released,target_->ptz_command_,&PTZCommand::Stop);
+    connect(this->ui_->PTZ_up,&QPushButton::pressed,target_->ptz_command_,&PTZCommand::ManuUp);
+    connect(this->ui_->PTZ_up,&QPushButton::released,target_->ptz_command_,&PTZCommand::Stop);
+    connect(this->ui_->PTZ_down,&QPushButton::pressed,target_->ptz_command_,&PTZCommand::ManuDown);
+    connect(this->ui_->PTZ_down,&QPushButton::released,target_->ptz_command_,&PTZCommand::Stop);
     connect(this->ui_->stop,&QPushButton::clicked,target_->ptz_command_,&PTZCommand::Stop);
 
     ui_->ZoomChange->setMinimum(0);

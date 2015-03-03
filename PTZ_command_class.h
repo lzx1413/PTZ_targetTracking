@@ -17,6 +17,7 @@ public:
     void CommInit(void);  //串口初始化
     void PTZ_Init(void);  //ptz初始化
     void Home(void);  //返回home(0,0)处
+    void AutoTurn(int now_x,int now_y,int last_x,int last_y);
     void AutoLeft(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向左转
     void AutoRight(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向右转
     void AutoUp(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向上转
@@ -26,6 +27,7 @@ public:
     void ManuUp();  //手动追踪时开始向上转
     void ManuDown();  //手动追踪时开始向下转
     void Stop(void);  //停止转动
+    void AutoZoom(int height,int width);
     void ZoomIn(void);  //放大
     void ZoomOut(void);  //缩小
     void ZoomStop(void);  //停止放大或缩小
@@ -37,7 +39,7 @@ public:
     void FocusNear(void);  //聚焦于最近点
     void FocusSetMF(void);  //设定为手动聚焦
     void FocusSetAF(void);  //设定为自动聚焦
-    void PosSet(double panangle, double tiltangle);  //设置一下步转动位置
+    void PosSet(double panangle, double tiltangle);  //设置下一步转动位置
     double GetPTZPanAngle(void);  //获得当前水平角度
     double GetPTZTiltAngle(void);  //获得当前竖直角度
     int GetPTZZoomPos(void);  //获得当前放大倍数
@@ -47,6 +49,7 @@ public:
 	//bool ReturnPTZ(const CvPoint ClickedPoint);
     void DisplayRxData();
    // QByteArray commData;
+    void Point2Point(Point oldpoint);
 private:
     int time_stop_;  //每个指令运行的时间
     int x_state_change_;  //判断x方向是否发生反转
@@ -55,6 +58,8 @@ private:
     int last_y_state_;   //上一次y运动方向
     int now_x_state_;  //这一次x运动方向
     int now_y_state_;  //这一次y运动方向
+    int last_x_state_2;//两次前的运动方向
+    int last_y_state_2;
 	
 };
 
