@@ -8,6 +8,8 @@ QT       += core gui
 QT       += serialport
 CONFIG   += console
 RC_FILE  += myico.rc
+QT       +=network
+CONFIG   +=C++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,8 +24,7 @@ SOURCES += main.cpp\
     information_feedback_class.cpp \
     my_serialport_class.cpp \
     PTZ_command_class.cpp \
-    CompressiveTracker.cpp \
-    RunTracker.cpp
+    FaceDection.cpp
 
 HEADERS  += mainwindow.h \
     stdafx.h \
@@ -32,7 +33,7 @@ HEADERS  += mainwindow.h \
     information_feedback_class.h \
     my_serialport_class.h \
     PTZ_command_class.h \
-    CompressiveTracker.h
+    FaceDetection.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include
@@ -66,4 +67,7 @@ LIBS += -LD:/opencv/build/x86/vc11/lib \
 -lopencv_legacy249 \
 -lopencv_flann249
 }
+
+RESOURCES += \
+    resource.qrc
 

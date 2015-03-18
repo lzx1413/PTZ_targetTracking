@@ -21,7 +21,7 @@ PTZCommand::PTZCommand()
 
 PTZCommand::~PTZCommand()
 {
-  //  delete my_serial_port;
+    delete my_serial_port;
 }
 
 
@@ -40,6 +40,7 @@ void PTZCommand::CommInit()
 
     } // 查找所有可用串口
     my_serial_port->StartCom();
+    emit SetComNum(my_serial_port->port_num_);
     qDebug() << "Thread starting" << endl;
     my_serial_port->ChangeComState(false);
     my_serial_port->start();  //串口线程开始
@@ -55,20 +56,18 @@ void PTZCommand::PTZ_Init()
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data_1, 7);
     this->my_serial_port->ChangeTxState(true);
-    //this->my_serial_port->msleep(20);
+    this->my_serial_port->msleep(20);
     waitKey(20);
 
 
     //2.信号反馈设置
     //writestring = "FF 30 30 00 94 31 EF";
     char command_data_2[7] = {0xFF, 0x30, 0x30, 0x00, 0x94, 0x31, 0xEF};
-   // this->command_data.clear();
-  //  this->command_data.append( 0xFF, 0x30, 0x30, 0x00, 0x94, 0x31, 0xEF );
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data_2, 7);
     this->my_serial_port->ChangeTxState(true);
-    //this->my_serial_port->msleep(20);
+    this->my_serial_port->msleep(20);
     waitKey(20);
     //3. 打开摄像头
     //    writestring = "FF 30 30 00 A0 31 EF";
@@ -79,6 +78,7 @@ void PTZCommand::PTZ_Init()
     this->my_serial_port->ChangeTxState(true);
      waitKey(20);
 }
+
 void PTZCommand::Home(void)
 {
     PanSpeedSet(800);
@@ -451,7 +451,7 @@ void PTZCommand::FocusSet(double FocusNumber)
     //return to auto focus mode
     //FocusSetAF();
 }
-void PTZCommand::PanSpeedSet(int PanSpeed)
+void PTZCommand::PanSpeedSet(int PanSpeed)//8-800
 {
     char cPanSpeed[5] = { 0 };
     int i = 0;
@@ -498,14 +498,10 @@ void PTZCommand::PanSpeedSet(int PanSpeed)
 
 }
 
-void PTZCommand::TiltSpeedSet(int TiltSpeed)
+void PTZCommand::TiltSpeedSet(int TiltSpeed)//8-622
 {
     char cTiltSpeed[5] = { 0 };
     int i = 0;
-
-    //Set manual focus mode
-   // FocusSetMF();
-
     char command_data[7];
     _itoa(TiltSpeed, cTiltSpeed, 16);
     for (i = 0; i<5; i++)
@@ -903,7 +899,7 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
 
 void PTZCommand::PTZcontrol(Point oldPoint, Point newPoint,int frame_num)
 {
-    static int pan_intg,tilt_intg;
+    int pan_intg,tilt_intg;
     int pan_speed;
     int tilt_speed;
     Point set_point_;
@@ -1076,3 +1072,9 @@ else
     ZoomStop();
 */
 }
+
+void PTZCommand::CloseCom()
+{
+    my_serial_port->StopCom();
+}
+

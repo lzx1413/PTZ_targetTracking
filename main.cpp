@@ -5,11 +5,12 @@
 using namespace cv;
 int main(int argc, char *argv[])
 {
-
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
-   // w.target_->ptz_command_->Home();
+    w.target_-> ptz_command_->CommInit();
+    w.target_-> ptz_command_->PTZ_Init();
+    w.target_->ptz_command_->Home();
    // w.target_->ptz_command_->my_serial_port->sleep(2);
    // w.target->test();
    //  w.startTracking();

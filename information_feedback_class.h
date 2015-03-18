@@ -19,6 +19,10 @@ signals:
 private:
     QDateTime time_;  //用于在信息前面加入时间信息
   //  DISALLOW_COPY_AND_ASSIGN(InformationFeedback);
+
+
+
+
 };
 
 #endif // INFO_H

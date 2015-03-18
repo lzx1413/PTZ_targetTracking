@@ -15,6 +15,7 @@ public:
     ~PTZCommand();
     void PTZcontrol(Point old_point,Point new_point,int frame_num);  //控制算法
     void CommInit(void);  //串口初始化
+    void CloseCom(void);//关闭串口
     void PTZ_Init(void);  //ptz初始化
     void Home(void);  //返回home(0,0)处
     void AutoTurn(int now_x,int now_y,int last_x,int last_y);
@@ -50,6 +51,9 @@ public:
     void DisplayRxData();
    // QByteArray commData;
     void Point2Point(Point oldpoint);
+
+signals:
+    void SetComNum(QString comnum);
 private:
     int time_stop_;  //每个指令运行的时间
     int x_state_change_;  //判断x方向是否发生反转

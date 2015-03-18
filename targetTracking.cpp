@@ -1,11 +1,11 @@
 #include "targetTracking.h"
-#include"CompressiveTracker.h"
-Rect g_selection;
-bool g_selectObject = false;
-Point g_origin;
-Mat g_image = Mat::zeros(640, 640, CV_8UC3);
-int g_trackObject = 0 ;
-bool drawing_box = false;
+#include  "FaceDetection.h"
+static Rect g_selection;
+static bool g_selectObject = false;
+static Point g_origin;
+static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
+static int g_trackObject = 0 ;
+
 void TargetTracking::test()
 {
     int x = 0;
@@ -18,45 +18,11 @@ void TargetTracking::test()
           x = 0;
       waitKey(1000);
     }
+}
 
-}
-void mouseHandler(int event, int x, int y, int flags, void *param)
-{
-    switch (event)
-    {
-    case CV_EVENT_MOUSEMOVE:
-        if (drawing_box)
-        {
-            g_selection.width = x - g_selection.x;
-            g_selection.height = y - g_selection.y;
-        }
-        break;
-    case CV_EVENT_LBUTTONDOWN:
-        drawing_box = true;
-        g_selection = Rect(x, y, 0, 0);
-        g_selectObject = true;
-        break;
-    case CV_EVENT_LBUTTONUP:
-        drawing_box = false;
-        if (g_selection.width < 0)
-        {
-            g_selection.x += g_selection.width;
-            g_selection.width *= -1;
-        }
-        if( g_selection.height < 0 )
-        {
-            g_selection.y += g_selection.height;
-            g_selection.height *= -1;
-        }
-        g_selectObject = true;
-        break;
-    default:
-        break;
-    }
-}
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 {
-    if (!g_selectObject)
+    if (g_selectObject)
     {
         g_selection.x = MIN(x, g_origin.x);
         g_selection.y = MIN(y, g_origin.y);
@@ -74,10 +40,10 @@ static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取�
     case CV_EVENT_LBUTTONDOWN:
         g_origin = Point(x, y);
         g_selection = Rect(x, y, 0, 0);
-        g_selectObject = false;
+        g_selectObject = true;
         break;
     case CV_EVENT_LBUTTONUP:
-        g_selectObject = true;
+        g_selectObject = false;
         if (g_selection.width > 0 && g_selection.height > 0)
             g_trackObject = -1;
         break;
@@ -132,7 +98,11 @@ void TargetTracking::set_exit_flag()
 
 int TargetTracking::tracking()
 {
-    VideoCapture cap;
+   // VideoCapture cap;
+    //cap.open(0);//打开摄像头
+    CvCapture *cap = 0;
+    cap = cvCaptureFromCAM(0);
+    CascadeInit();
     Rect trackWindow;
     int hsize = 80;  //越大越准确，同时计算量也越大
     float hranges[] = { 0, 180 };
@@ -158,20 +128,18 @@ int TargetTracking::tracking()
     condens->DynamMatr[1] = 0.0;
     condens->DynamMatr[2] = 0.0;
     condens->DynamMatr[3] = 1.0;
-    cap.open(0);//打开摄像头
-    if (!cap.isOpened())
-    {
-        cout << "***Could not initialize capturing...***\n";
-        cout << "Current parameter's value: \n";
-        return -1;
-    }
+
+//    if (!cap.isOpened())
+//    {
+//        cout << "***Could not initialize capturing...***\n";
+//        cout << "Current parameter's value: \n";
+//        return -1;
+//    }
 
     namedWindow("Histogram", 0);
     namedWindow("TargetTracking", 0);
     setMouseCallback("TargetTracking", onMouse, 0);
-  //  createTrackbar("Vmin", "CamShift Demo", &vmin, 256, 0);
- //   createTrackbar("Vmax", "CamShift Demo", &vmax, 256, 0);
-  //  createTrackbar("Smin", "CamShift Demo", &smin, 256, 0);
+
 
     Mat frame = Mat::zeros(640, 480, CV_8UC3);
     Mat hsv = Mat::zeros(640, 480, CV_8UC3);
@@ -180,20 +148,40 @@ int TargetTracking::tracking()
     Mat hist = Mat::zeros(640, 480, CV_8UC3);
     Mat histimg = Mat::zeros(640, 480, CV_8UC3);
     Mat backproj;
+    IplImage *face_frame = 0;
     bool paused = false;
     int frame_num = 0;
+    int num_of_facedection = 0;
     for (;;)
     {
 
         if (!paused)
         {
-            cap >> frame;
-            if (frame.empty())
+            //cap >> face_frame;
+            face_frame = cvRetrieveFrame(cap);
+            if (!face_frame)
                 break;
         }
-        GaussianBlur(frame,g_image,Size(1,1),0,0);
+
         if (!paused)
         {
+            if(!g_trackObject)
+            {
+              CvRect faces = GetFaceRoi(face_frame);
+              if(faces.width>0)
+            {
+                  num_of_facedection++;
+                  qDebug()<<"have a face"<<faces.x<<faces.y<<faces.height<<faces.width;
+                  if(num_of_facedection>5)
+                  {
+                        g_trackObject = -1;
+                        g_selection = faces;
+                        num_of_facedection=0;
+                   }
+           }
+            }
+            frame = face_frame;
+            GaussianBlur(frame,g_image,Size(1,1),0,0);
             cvtColor(g_image, hsv, COLOR_BGR2HSV);//转换到hsv空间
 
             if (g_trackObject)//已经选择好跟踪对象
@@ -333,90 +321,3 @@ int TargetTracking::tracking()
   g_trackObject = 0 ;
 return 0;
 }
- int TargetTracking::tracking2()
- {
-         bool paused = false;
-         Mat frame = Mat::zeros(320, 240, CV_8UC3);
-         VideoCapture cap;
-         cap.open(0);
-         if (!cap.isOpened())
-         {
-             cout << "capture device failed to open!" << endl;
-             return -1;
-         }
-         // Register mouse callback to draw the tracking g_selection
-         namedWindow("CT", 0);
-         setMouseCallback("CT", onMouse, 0);
-         // CT framework
-         CompressiveTracker ct;
-         Mat last_gray;
-         Mat current_gray;
-         cap.set(CV_CAP_PROP_FRAME_WIDTH, 340);
-         cap.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
-
-        while(1)
-        {
-             // Initialization
-                 if(!paused)
-                 {
-                   cap >> frame;
-                   if(frame.empty())
-                       break;
-                 }
-                 if(!paused)
-                 {
-
-
-            // Remove callback
-            //  setMouseCallback("CT", NULL, NULL);
-
-             if(g_trackObject )
-             {
-                 cvtColor(frame, last_gray, CV_RGB2GRAY);
-                 rectangle(frame, g_selection, Scalar(0, 0, 255));
-
-                  ct.init(last_gray, g_selection);
-                 // get frame
-                 cvtColor(frame, current_gray, CV_RGB2GRAY);
-                 // Process Frame
-                 ct.processFrame(current_gray, g_selection);
-                 // Draw Points
-                 rectangle(frame, g_selection, Scalar(0, 0, 255));
-                 // Display
-
-                 //printf("Current Tracking g_selection = x:%d y:%d h:%d w:%d\n", g_selection.x, g_selection.y, g_selection.width, g_selection.height);
-
-                 //if (cvWaitKey(33) == 'q') {	break; }
-             }
-             else if(g_trackObject<0)
-                 paused = false;
-             imshow("CT", frame);
-             cvWaitKey(1);
-             if(exit_flag_ == true)
-             {
-                 exit_flag_ = false;
-                 break;
-             }
-             char c = (char)waitKey(3);
-             switch(c)
-             {
-             case 'q':
-                 break;
-             case'p':
-                 paused = !paused;
-                 break;
-             default:
-                 break;
-             }
-
-            }
-
-
-        }
-         destroyWindow("CT");
-         g_selectObject = false;
-         g_trackObject = 0 ;
-
-         return 0;
-
- }
