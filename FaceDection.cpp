@@ -2,7 +2,7 @@
 #include<QDebug>
 static CvMemStorage *storage = 0;
 static CvHaarClassifierCascade *cascade = 0;//harr 分类器级联的内部标识形式
-static const char *cascade_name = "D:/E/work/QT/TargetTracking_PTZ/cascadehaarcascade_frontalface_alt2.xml";
+static const char *cascade_name = "D:/E/work/QT/TargetTracking_PTZ/cascade/haarcascade_frontalface_alt2.xml";
 static IplImage* frame_copy = nullptr;
 void CascadeInit()
 {

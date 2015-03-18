@@ -60,6 +60,8 @@ TargetTracking::TargetTracking()
     ptz_command_ = new PTZCommand;
     old_point_ = Point(320,240);
     exit_flag_ = false;
+    old_target_area_ = 0;
+    new_target_area_ = 0;
 
 }
 TargetTracking::~TargetTracking()
@@ -95,6 +97,32 @@ void TargetTracking::set_exit_flag()
       exit_flag_ =true;
 
 }
+
+int TargetTracking::target_miss_config()
+{
+    if( get_point_distace(new_point_,old_point_)> 640||((float)new_target_area_/(float)old_target_area_)>10||((float)new_target_area_/(float)old_target_area_)<0.2)
+    {
+        ptz_command_->Stop();
+         waitKey(15);
+        ptz_command_->Home();
+        return 0;
+    }
+}
+
+bool TargetTracking::face_config(IplImage *frame, CvRect target)
+{
+    CvRect target2 = {target.x-20,target.y-20,target.width+40,target.height+40};
+    IplImage* dst = NULL;
+    cvSetImageROI(frame,target2);
+    cvCopy(frame,dst);
+    cvResetImageROI(frame);
+     CvRect faces = GetFaceRoi(dst);
+     if(faces.height == 0)
+         return false;
+     else
+         return true;
+}
+
 
 int TargetTracking::tracking()
 {
@@ -152,6 +180,8 @@ int TargetTracking::tracking()
     bool paused = false;
     int frame_num = 0;
     int num_of_facedection = 0;
+
+
     for (;;)
     {
 
@@ -219,6 +249,8 @@ int TargetTracking::tracking()
                             Point((i + 1)*binW, histimg.rows - val),
                             Scalar(buf.at<Vec3b>(i)), -1, 8);
                     }
+                    new_target_area_ = g_selection.area();
+                    old_target_area_ = g_selection.area();
                 }
 
                 calcBackProject(&hue, 1, 0, hist, backproj, &phranges);//计算反向投影图
@@ -263,6 +295,19 @@ int TargetTracking::tracking()
                 }
                 if (backproj_mode_)
                     cvtColor(backproj, g_image, COLOR_GRAY2BGR);
+                new_target_area_ = trackBox.size.area();
+                g_trackObject = target_miss_config();
+                old_target_area_ = new_target_area_;
+                if(!(frame_num%10))
+                {
+                    g_trackObject = face_config(face_frame,trackBox.boundingRect());
+                    if(!g_trackObject)
+                    {
+                        ptz_command_->Stop();
+                        waitKey(20);
+                        ptz_command_->Home();
+                    }
+                }
                 ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
 
         }
