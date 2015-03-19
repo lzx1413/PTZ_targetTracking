@@ -5,21 +5,6 @@ static bool g_selectObject = false;
 static Point g_origin;
 static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
-
-void TargetTracking::test()
-{
-    int x = 0;
-    for(int i = 0;i<1000;i++)
-    {
-
-      ptz_command_->PTZcontrol(Point(320,240),Point(x,240),2);
-      x = x+100;
-      if(x>640)
-          x = 0;
-      waitKey(1000);
-    }
-}
-
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 {
     if (g_selectObject)
@@ -30,9 +15,6 @@ static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取�
         g_selection.height = std::abs(y - g_origin.y);
 
         g_selection &= Rect(0, 0, g_image.cols, g_image.rows);
-       // frameNum = -1;
-       // minWidth = selection.width;
-       //minHeight = selection.height;
     }
 
     switch (event)
@@ -77,7 +59,7 @@ void TargetTracking::DrawCross( Point center, Scalar color,int d )
     Point( center.x - d, center.y + d ), color, 2, CV_AA, 0 );
 }
 
-int TargetTracking:: iAbsolute(int a, int b)
+inline int TargetTracking:: iAbsolute(int a, int b)
 {
     int c = 0;
     if (a > b)
@@ -91,6 +73,7 @@ int TargetTracking:: iAbsolute(int a, int b)
     return	c;
 }
 
+//设置退出视频循环信号
 void TargetTracking::set_exit_flag()
 {
     if(exit_flag_ == false)
@@ -98,38 +81,65 @@ void TargetTracking::set_exit_flag()
 
 }
 
+//用于判断跟踪是否失败
 int TargetTracking::target_miss_config()
 {
-    if( get_point_distace(new_point_,old_point_)> 640||((float)new_target_area_/(float)old_target_area_)>10||((float)new_target_area_/(float)old_target_area_)<0.2)
+    if( get_point_distace(new_point_,old_point_)> 640||((float)new_target_area_/(float)old_target_area_)>2||((float)new_target_area_/(float)old_target_area_)<0.8)
     {
-        ptz_command_->Stop();
-         waitKey(15);
-        ptz_command_->Home();
         return 0;
     }
 }
 
+//判断当前目标是否包含脸
 bool TargetTracking::face_config(IplImage *frame, CvRect target)
 {
-    CvRect target2 = {target.x-20,target.y-20,target.width+40,target.height+40};
-    IplImage* dst = NULL;
-    cvSetImageROI(frame,target2);
-    cvCopy(frame,dst);
-    cvResetImageROI(frame);
-     CvRect faces = GetFaceRoi(dst);
-     if(faces.height == 0)
-         return false;
-     else
-         return true;
+    if(target.height<=0||target.width <=0||target.x<0||target.y<0||target.x+target.width>640||target.y+target.height>480)
+    {
+        qDebug()<<target.x<<target.y<<target.width<<target.height;
+        return true;
+    }
+
+    else
+    {
+       CvRect target2 = {target.x,target.y,target.width,target.height};
+       cvSetImageROI(frame,target2);
+       IplImage* dst = cvCreateImage(cvSize(target2.width,target2.height),frame->depth, 3);
+       cvCopy(frame,dst);
+       cvResetImageROI(frame);
+       CvRect faces = GetFaceRoi(dst);
+       cvReleaseImage(&dst);
+       if(faces.height == 0)
+            return false;
+       else
+            return true;
+    }
 }
 
+void TargetTracking::PTZReposition()
+{
 
+    if(!g_selectObject&&(ptz_command_->GetPTZPanAngle()||ptz_command_->GetPTZFocusPos()))
+    {
+        ptz_command_->Stop();
+        waitKey(20);
+        ptz_command_->Home();
+        waitKey(1000);
+        qDebug()<<ptz_command_->GetPTZPanAngle()<<ptz_command_->GetPTZFocusPos();
+        waitKey();
+    }
+}
 int TargetTracking::tracking()
 {
-   // VideoCapture cap;
-    //cap.open(0);//打开摄像头
+
     CvCapture *cap = 0;
     cap = cvCaptureFromCAM(0);
+
+    if (!cap)
+    {
+        cout << "***Could not initialize capturing...***\n";
+        cout << "Current parameter's value: \n";
+        return -1;
+    }
     CascadeInit();
     Rect trackWindow;
     int hsize = 80;  //越大越准确，同时计算量也越大
@@ -156,14 +166,6 @@ int TargetTracking::tracking()
     condens->DynamMatr[1] = 0.0;
     condens->DynamMatr[2] = 0.0;
     condens->DynamMatr[3] = 1.0;
-
-//    if (!cap.isOpened())
-//    {
-//        cout << "***Could not initialize capturing...***\n";
-//        cout << "Current parameter's value: \n";
-//        return -1;
-//    }
-
     namedWindow("Histogram", 0);
     namedWindow("TargetTracking", 0);
     setMouseCallback("TargetTracking", onMouse, 0);
@@ -184,10 +186,10 @@ int TargetTracking::tracking()
 
     for (;;)
     {
+        PTZReposition();
 
         if (!paused)
         {
-            //cap >> face_frame;
             face_frame = cvRetrieveFrame(cap);
             if (!face_frame)
                 break;
@@ -300,13 +302,7 @@ int TargetTracking::tracking()
                 old_target_area_ = new_target_area_;
                 if(!(frame_num%10))
                 {
-                    g_trackObject = face_config(face_frame,trackBox.boundingRect());
-                    if(!g_trackObject)
-                    {
-                        ptz_command_->Stop();
-                        waitKey(20);
-                        ptz_command_->Home();
-                    }
+                   g_trackObject = face_config(face_frame,trackBox.boundingRect());
                 }
                 ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
 
@@ -323,7 +319,6 @@ int TargetTracking::tracking()
 
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
-       // imshow("asdf",g_image);
 
         if(exit_flag_ == true)
         {
@@ -356,7 +351,6 @@ int TargetTracking::tracking()
             ;
         }
     }
-
 
 }
   destroyWindow("TargetTracking");

@@ -11,29 +11,6 @@ int main(int argc, char *argv[])
     w.target_-> ptz_command_->CommInit();
     w.target_-> ptz_command_->PTZ_Init();
     w.target_->ptz_command_->Home();
-   // w.target_->ptz_command_->my_serial_port->sleep(2);
-   // w.target->test();
-   //  w.startTracking();
-//    targetTracking track;
-//    track.ptzComm->Home();
-//    track.tracking();
-
-//    Mat img = imread("D:/tiger.jpg");
-//    if (img.empty())
-//    {
-//        fprintf(stderr, "Error: load image failed.");
-//        return -1;
-//    }
-//    namedWindow("image", CV_WINDOW_AUTOSIZE);
-//    imshow("image", img);
-//    PTZComm* com = new PTZComm;
-//    com->CommInit();
-//    com->PTZ_Init();
-//    com->Home();
-//    com->Up();
-//    com->comm->sleep(1);
-//    waitKey(0);
-  //  return 0;
-    // tracking();
+    waitKey();
     return a.exec();
 }

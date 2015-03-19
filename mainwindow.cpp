@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
 /***********************信息显示部分****************************/
 connect(&this->target_->ptz_command_->my_serial_port->information_,&InformationFeedback::GetInfomation,ui_->infoDisplay,&QTextEdit::append);
 
+/************************键盘控制相关变量***********************/
 keypressflag_ = false;
 up_pressed = false;
 down_pressed = false;
@@ -81,6 +82,7 @@ left_pressed = false;
 MainWindow::~MainWindow()
 {
     delete ui_;
+    delete target_;
 }
 void MainWindow::StartTracking()
 {
@@ -126,6 +128,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
     keypressflag_ = true;
 }
+
 void MainWindow::keyReleaseEvent(QKeyEvent*e)
 {
     if(e->key()==Qt::Key_Up&&up_pressed&&!e->isAutoRepeat())
