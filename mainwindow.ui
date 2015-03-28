@@ -73,7 +73,7 @@
              </font>
             </property>
             <property name="text">
-             <string>      信息显示区</string>
+             <string>information</string>
             </property>
            </widget>
           </item>
@@ -131,7 +131,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>GroupBox</string>
+        <string>control</string>
        </property>
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
@@ -215,7 +215,7 @@
              <item>
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>串口号</string>
+                <string>serialport</string>
                </property>
               </widget>
              </item>
@@ -237,7 +237,7 @@
            <item>
             <widget class="QPushButton" name="comClose">
              <property name="text">
-              <string>关闭串口</string>
+              <string>open port</string>
              </property>
             </widget>
            </item>
@@ -247,7 +247,7 @@
               <enum>Qt::StrongFocus</enum>
              </property>
              <property name="text">
-              <string>打开串口</string>
+              <string>close port </string>
              </property>
             </widget>
            </item>
@@ -271,7 +271,7 @@
             </font>
            </property>
            <property name="text">
-            <string>云台控制</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -333,6 +333,80 @@
      </item>
     </layout>
    </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>10</y>
+      <width>661</width>
+      <height>671</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>video</string>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <widget class="QLabel" name="video">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>640</width>
+       <height>480</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="resource.qrc">:/picture/2.jpg</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="startvideo">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>520</y>
+       <width>101</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>start video</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="closevideo">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>520</y>
+       <width>101</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>close video</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="takepic">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>520</y>
+       <width>111</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>take picture</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -355,6 +429,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

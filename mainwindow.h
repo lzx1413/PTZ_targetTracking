@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include"targetTracking.h"
+#include<QTimer>
+#include<QImage>
 namespace Ui {
 class MainWindow;
 }
@@ -19,10 +21,20 @@ public:
     void keyPressEvent(QKeyEvent*e);
     void keyReleaseEvent(QKeyEvent*);
     void DisplayMat(Mat frame);
+    void  camaraGet();
+private slots:
+    void OpenCamera();
+    void ReadFrame(void);
+    void CloseCamera();
+    void TakingPictures();
+
 
 private:
     Ui::MainWindow *ui_;
-
+    QTimer *timer_;
+    QImage *imag_;
+    CvCapture *cam_;
+    IplImage  *frame_;
     bool keypressflag_;
     bool up_pressed;
     bool down_pressed;

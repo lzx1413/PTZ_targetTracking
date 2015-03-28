@@ -194,8 +194,7 @@ Stop();
 void PTZCommand::ManuLeft( )
 {
    // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00,0x60, 0x31,0x30, 0xEF };
-   // PanSpeedSet(800);
-    //this->my_serial_port->msleep(5);
+    Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
@@ -218,6 +217,7 @@ void PTZCommand::ManuLeft( )
 void PTZCommand::ManuRight()
 {
     //char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x32, 0x30, 0xEF };
+    Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x31, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
@@ -238,6 +238,7 @@ void PTZCommand::ManuRight()
 
 void PTZCommand::ManuUp( )
 {
+    Stop();
     // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x31, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x33, 0xEF };
     this->my_serial_port->tx_data_.clear();
@@ -257,6 +258,7 @@ void PTZCommand::ManuUp( )
 
 void PTZCommand::ManuDown()
 {
+    Stop();
     //char command_data[8]= { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x32, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x34, 0xEF };
     this->my_serial_port->tx_data_.clear();
