@@ -9,8 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->setupUi(this);
 //    ptzComm = new PTZComm;
     target_ = new TargetTracking;
-    //target_->ptz_command_->CommInit();
-    //target_-> ptz_command_->PTZ_Init();
+
     ui_->infoDisplay->setTextColor(QColor(255,255,255));
     ui_->infoDisplay->setTextBackgroundColor(QColor(0,0,0));
     QLabel *permanent  = new QLabel(this);
@@ -77,6 +76,16 @@ up_pressed = false;
 down_pressed = false;
 right_pressed = false;
 left_pressed = false;
+
+/**********************视频显示*************************/
+cam_ = NULL;
+timer_ = new QTimer(this);
+imag_ = new QImage();
+connect(this->timer_,&QTimer::timeout,this,&MainWindow::ReadFrame);
+connect(ui_->startvideo, &QPushButton::clicked, this, &MainWindow::OpenCamera);
+connect(ui_->takepic, &QPushButton::clicked, this, &MainWindow::TakingPictures);
+connect(ui_->closevideo, &QPushButton::clicked, this, &MainWindow::CloseCamera);
+
 }
 
 MainWindow::~MainWindow()
@@ -167,6 +176,8 @@ void MainWindow::keyReleaseEvent(QKeyEvent*e)
     keypressflag_ = false;
 }
 
+
+
 //void MainWindow::DisplayMat(Mat mat)
 //{
 //     cv::Mat rgb;
@@ -185,3 +196,39 @@ void MainWindow::keyReleaseEvent(QKeyEvent*e)
 //     ui_->video->show();
 
 //}
+void MainWindow::OpenCamera()
+{
+    cam_ = cvCreateCameraCapture(2);//打开摄像头，从摄像头中获取视频
+
+    timer_->start(33);              // 开始计时，超时则发出timeout()信号
+}
+
+/*********************************
+********* 读取摄像头信息 ***********
+**********************************/
+void MainWindow::ReadFrame()
+{
+    frame_ = cvQueryFrame(cam_);// 从摄像头中抓取并返回每一帧
+    // 将抓取到的帧，转换为QImage格式。QImage::Format_RGB888不同的摄像头用不同的格式。
+     QImage image = QImage((const uchar*)frame_->imageData, frame_->width, frame_->height, QImage::Format_RGB888).rgbSwapped();
+    ui_->video->setPixmap(QPixmap::fromImage(image));  // 将图片显示到label上
+}
+
+/*************************
+********* 拍照 ***********
+**************************/
+void MainWindow::TakingPictures()
+{
+
+}
+
+/*******************************
+***关闭摄像头，释放资源，必须释放***
+********************************/
+void MainWindow::CloseCamera()
+{
+    timer_->stop();         // 停止读取数据。
+
+    cvReleaseCapture(&cam_);//释放内存；
+}
+

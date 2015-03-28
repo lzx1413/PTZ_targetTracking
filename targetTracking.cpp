@@ -32,20 +32,33 @@ static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取�
     }
 }
 
-TargetTracking::TargetTracking()
+
+//区域的缩放
+inline static CvRect RectChange(CvRect &rec ,float scale)
 {
-    backproj_mode_ = false;
-    show_hist_ = true;
-    vmin_ = 10 ;
-    vmax_ = 256;
-    smin_ = 30;
-    ptz_command_ = new PTZCommand;
-    old_point_ = Point(320,240);
-    exit_flag_ = false;
-    old_target_area_ = 0;
-    new_target_area_ = 0;
+    CvRect tem ;
+    tem.x  = static_cast<int>(rec.x-rec.width*(scale-1)/2);
+    tem.y  = static_cast<int>(rec.y-rec.height*(scale-1)/2);
+    tem.width = static_cast<int>(rec.width*scale);
+    tem.height = static_cast<int>(rec.height*scale);
+  //  tem = tem&(cvRect(0,0,640,480));
+   if(tem.x<0)
+       tem.x = 0;
+   if(tem.y<0)
+       tem.y = 0;
+   if(tem.x+tem.width>640)
+       tem.width = 640-tem.x;
+   if(tem.y+tem.height>480)
+       tem.height = 480-tem.y;
+    return tem;
 
 }
+
+TargetTracking::TargetTracking()
+{
+    ptz_command_ = new PTZCommand;
+}
+
 TargetTracking::~TargetTracking()
 {
     delete ptz_command_;
@@ -91,43 +104,61 @@ int TargetTracking::target_miss_config()
 }
 
 //判断当前目标是否包含脸
-bool TargetTracking::face_config(IplImage *frame, CvRect target)
+bool TargetTracking::face_config(IplImage *frame)
 {
-    if(target.height<=0||target.width <=0||target.x<0||target.y<0||target.x+target.width>640||target.y+target.height>480)
-    {
-        qDebug()<<target.x<<target.y<<target.width<<target.height;
-        return true;
-    }
 
-    else
-    {
-       CvRect target2 = {target.x,target.y,target.width,target.height};
-       cvSetImageROI(frame,target2);
-       IplImage* dst = cvCreateImage(cvSize(target2.width,target2.height),frame->depth, 3);
-       cvCopy(frame,dst);
-       cvResetImageROI(frame);
-       CvRect faces = GetFaceRoi(dst);
-       cvReleaseImage(&dst);
+       CvRect faces = GetFaceRoi(frame);
        if(faces.height == 0)
             return false;
+
        else
-            return true;
-    }
+       {/*
+           trackBox.center = Point(faces.x+0.5*faces.width,faces.y+0.5*faces.height);
+           trackBox.size.width = faces.width;
+           trackBox.size.height = faces.height;
+           stable_point_ =  Point(faces.x+0.5*faces.width,faces.y+0.5*faces.height);*/
+           return true;
+        }
+
 }
 
 void TargetTracking::PTZReposition()
 {
 
-    if(!g_selectObject&&(ptz_command_->GetPTZPanAngle()||ptz_command_->GetPTZFocusPos()))
-    {
+
         ptz_command_->Stop();
         waitKey(20);
         ptz_command_->Home();
-        waitKey(1000);
+        waitKey(20);
+
+        ptz_command_->PanSpeedSet(800);
+        waitKey(20);
+        ptz_command_->TiltSpeedSet(600);
+        waitKey(3000);
         qDebug()<<ptz_command_->GetPTZPanAngle()<<ptz_command_->GetPTZFocusPos();
-        waitKey();
+
+}
+
+void TargetTracking::UpdateStablePoint()
+{
+    if(abs(new_point_.x-old_point_.x)<200&&abs(new_point_.y-old_point_.y)<200)
+    {
+        stable_point_ = new_point_;
     }
 }
+
+void TargetTracking::GetPredictPoint()
+{
+    int weight= 0.5 ;
+    predict_pt_.x = weight*statePt_.x +(1-weight)*trackBox.center.x;
+       predict_pt_.y = weight*statePt_.y +(1-weight)*trackBox.center.y;
+  //   if((float)new_target_area_/(float)origin_area_<0.4||(float)new_target_area_/(float)origin_area_>8)
+  //   {
+  //       predict_pt_ = stable_point_;
+   //  }
+}
+
+
 int TargetTracking::tracking()
 {
 
@@ -186,7 +217,7 @@ int TargetTracking::tracking()
 
     for (;;)
     {
-        PTZReposition();
+      //
 
         if (!paused)
         {
@@ -204,13 +235,19 @@ int TargetTracking::tracking()
             {
                   num_of_facedection++;
                   qDebug()<<"have a face"<<faces.x<<faces.y<<faces.height<<faces.width;
-                  if(num_of_facedection>5)
+                  if(num_of_facedection>10)
                   {
                         g_trackObject = -1;
-                        g_selection = faces;
+                        g_selection = RectChange(faces,1);
                         num_of_facedection=0;
+                        rectangle(g_image,faces,Scalar(125,125,0));
                    }
            }
+              else
+              {
+                  num_of_facedection = 0;
+
+              }
             }
             frame = face_frame;
             GaussianBlur(frame,g_image,Size(1,1),0,0);
@@ -253,25 +290,21 @@ int TargetTracking::tracking()
                     }
                     new_target_area_ = g_selection.area();
                     old_target_area_ = g_selection.area();
+                    origin_area_ = g_selection.area();
+                    stable_point_ =Point( g_selection.x+g_selection.width/2,g_selection.y+g_selection.height/2);
                 }
 
                 calcBackProject(&hue, 1, 0, hist, backproj, &phranges);//计算反向投影图
                 backproj &= mask;
-                RotatedRect trackBox = CamShift(backproj, trackWindow,
+                trackBox = CamShift(backproj, trackWindow,
                 TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));//camshift主函数，最后一个参数是迭代停止的标准
                 cout<<trackBox.center.x<<" "<<trackBox.center.y<<endl;
                 cout<<trackWindow.x<<" "<<trackWindow.y<<endl;
-                //if(frameNum = -1 )
-                  //  oldPoint = trackBox.center;
-               // frameNum = frameNum + 2;
-
-                 ptz_command_->PTZcontrol(old_point_,trackBox.center,frame_num);
-
                 //oldPoint = trackBox.center;
                 /**********粒子滤波及其更新**********************/
                 measurement(0)=trackBox.center.x;
                 measurement(1)=trackBox.center.y;
-                for (int i = 0; i < condens->SamplesNum; i++)
+                for (int i = 0; i < condens->SamplesNum; i++)//设置置信度
                 {
 
                    float diffX = (measurement(0) - condens->flSamples[i][0])/x_range;
@@ -281,31 +314,51 @@ int TargetTracking::tracking()
                    DrawCross(partPt , Scalar(255,0,255), 2);
                 }
                 cvConDensUpdateByTime(condens);
-                Point statePt(condens->State[0], condens->State[1]);
-                circle( g_image,statePt,5,CV_RGB(0,0,255),3);
-                //circle( g_image,trackg_selection.center,5,CV_RGB(0,255,0),3);
-                circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
+                statePt_ = Point(condens->State[0], condens->State[1]);
 
 
-                if (trackWindow.area() <= 10)
+                GetPredictPoint();
+                trackBox.center = predict_pt_;
+                if (trackWindow.area() <= 100)
                 {
-//                    int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
-//                    trackWindow = Rect(trackWindow.x - r, trackWindow.y - r,
-//                        trackWindow.x + r, trackWindow.y + r) &
-//                        Rect(0, 0, cols, rows);//赋值给下一次查找的区域
-                     trackWindow = Rect(statePt.x,statePt.y,100,100)&Rect(0,0,640,640);
+                    int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
+                   trackWindow = Rect(trackWindow.x - r, trackWindow.y - r,
+                       trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);//赋值给下一次查找的
                 }
+                trackWindow = trackBox.boundingRect();
+
+                circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
+                circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
+                circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
                 if (backproj_mode_)
                     cvtColor(backproj, g_image, COLOR_GRAY2BGR);
-                new_target_area_ = trackBox.size.area();
-                g_trackObject = target_miss_config();
+                 new_target_area_ = trackBox.size.area();
+               // g_trackObject = target_miss_config();
                 old_target_area_ = new_target_area_;
+
+
+
+               // trackBox.center = predict_pt_;
+
+                new_point_ = trackBox.center;
+                UpdateStablePoint();
+                old_point_ = new_point_;
                 if(!(frame_num%10))
                 {
-                   g_trackObject = face_config(face_frame,trackBox.boundingRect());
+               //   g_trackObject = face_config(face_frame);
                 }
-                ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
 
+                if(g_trackObject == 0)
+                {
+                    num_of_facedection = 0;
+                    PTZReposition();
+                }
+
+
+                 ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
+                // rectangle(g_image,Point(statePt_.x-trackBox.size.width/2,statePt_.y-trackBox.size.height/2),Point(statePt_.x+trackBox.size.width/2,statePt_.y+trackBox.size.height/2),Scalar(255,0,0),2,8);
+
+                    ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
         }
         else if (g_trackObject < 0)
             paused = false;
@@ -348,7 +401,7 @@ int TargetTracking::tracking()
             paused = !paused;
             break;
         default:
-            ;
+            break;
         }
     }
 

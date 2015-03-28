@@ -4,6 +4,7 @@
 #include <QThread>
 #include <stdio.h>
 #include <QtGlobal>
+#include<QMutex>
 #include"information_feedback_class.h"
 
 /***********串口类*****************/
@@ -40,6 +41,7 @@ private:
     volatile bool com_opened_;
     volatile bool com_stopped_;
     volatile bool tx_event_;
+    QMutex mutex;
 
 };
 

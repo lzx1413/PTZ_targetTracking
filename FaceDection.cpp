@@ -66,6 +66,13 @@ CvRect GetFaceRoi(IplImage *frame)
      }
     cvReleaseMemStorage(&(faces->storage));
     cvReleaseImage(&frame_copy);
-    return r;
+    float scale = 1.3;
+    Point pt1,pt2;
+    pt1.x = r.x*scale;
+    pt2.x = (r.x + r.width)*scale;
+    pt1.y = r.y*scale;
+    pt2.y = (r.y + r.height)*scale;
+    CvRect face = cvRect(pt1.x,pt1.y,pt2.x-pt1.x,pt2.y-pt1.y);
+    return face;
 }
 

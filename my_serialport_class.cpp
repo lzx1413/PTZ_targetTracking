@@ -48,6 +48,7 @@ void MySerialPort::run()
         /*在串口打开而且发送数据更新存在的情况下进行数据发送操作*/
         if (this->com_opened_&&this->tx_event_)
         {
+
             this->tx_event_ = false;
             my_serialport->clear(QSerialPort::AllDirections);//清理通道
             qDebug() << "Brush:" << "send data to "<<this->port_num_ << this->tx_data_.length();
@@ -92,13 +93,17 @@ void MySerialPort::run()
                 information_.InfoChanged();
             }
         }
+
         /*没有发送数据而收到数据时的操作*/
-        if (my_serialport->waitForReadyRead(5))  //50ms
+
+        if (my_serialport->waitForReadyRead(5))  //50m
         {
+
             while (my_serialport->waitForReadyRead(5))
                 this->msleep(20);
             request_data_ = my_serialport->readAll();
             emit(this->ComRecive());
+
         }
         if (com_stopped_&&com_opened_)
         {
@@ -118,28 +123,39 @@ void MySerialPort::StopCom()
 }
 void MySerialPort::StartCom()
 {
+    mutex.lock();
     com_stopped_ = false;
-
+    mutex.unlock();
 }
 void MySerialPort::ChangeComState(bool stat)
 {
+    mutex.lock();
     com_opened_ = stat;
+    mutex.unlock();
 }
 void MySerialPort::SetMessage(const QString &message)
 {
+    mutex.lock();
     message_str_ = message;
+    mutex.unlock();
 
 }
 void MySerialPort::SetPortnum(const QString &num)
 {
+    mutex.lock();
     port_num_ = num;
+    mutex.unlock();
 
 }
 void MySerialPort::ChangeTxState(bool stat)
 {
+    mutex.lock();
     tx_event_ = stat;
+    mutex.unlock();
 }
 void MySerialPort::ChangeRxState(bool stat)
 {
+    mutex.lock();
     rx_event_ = stat;
+    mutex.unlock();
 }
