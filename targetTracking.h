@@ -1,5 +1,6 @@
 #ifndef TARGETRACKING_H
 #define TARGETRACKING_H
+#include<QDebug>
 #include <iostream>
 #include <vector>
 #include <opencv2/opencv.hpp>
@@ -7,7 +8,6 @@
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/legacy/legacy.hpp>
 #include"PTZ_command_class.h"
-#include<QDebug>
 using namespace cv;
 using namespace std;
 
@@ -37,6 +37,7 @@ private:
 
     bool backproj_mode_  = false;
     bool show_hist_ = true;  //是否显示直方图
+    bool flag_of_new_target_ = false;
     Point statePt_ =Point(0,0) ;
     RotatedRect trackBox = RotatedRect(Point2f(100,100), Size2f(100,50), 30);
     int vmin_ = 10;
@@ -48,6 +49,7 @@ private:
     int  new_target_area_ = 0;
     int origin_area_ = 0;
     Point stable_point_ = Point(320,240);
+  //  ImageController* image_controller_;
 
 };
 

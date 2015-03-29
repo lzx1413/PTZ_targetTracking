@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     information_feedback_class.cpp \
     my_serialport_class.cpp \
     PTZ_command_class.cpp \
-    FaceDection.cpp
+    FaceDection.cpp \
+    ImageCotroller.cpp
 
 HEADERS  += mainwindow.h \
     stdafx.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     information_feedback_class.h \
     my_serialport_class.h \
     PTZ_command_class.h \
-    FaceDetection.h
+    FaceDetection.h \
+    ImageController.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include

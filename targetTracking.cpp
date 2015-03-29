@@ -1,11 +1,13 @@
 #include "targetTracking.h"
 #include  "FaceDetection.h"
+#include"ImageController.h"
 static Rect g_selection;
 static bool g_selectObject = false;
 static Point g_origin;
 static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
+
 {
     if (g_selectObject)
     {
@@ -57,11 +59,13 @@ inline static CvRect RectChange(CvRect &rec ,float scale)
 TargetTracking::TargetTracking()
 {
     ptz_command_ = new PTZCommand;
+    //image_controller_ = new ImageController;
 }
 
 TargetTracking::~TargetTracking()
 {
     delete ptz_command_;
+    //delete image_controller_;
 }
 
 void TargetTracking::DrawCross( Point center, Scalar color,int d )
@@ -197,10 +201,14 @@ int TargetTracking::tracking()
     condens->DynamMatr[1] = 0.0;
     condens->DynamMatr[2] = 0.0;
     condens->DynamMatr[3] = 1.0;
+
     namedWindow("Histogram", 0);
     namedWindow("TargetTracking", 0);
     setMouseCallback("TargetTracking", onMouse, 0);
 
+
+    ImageControllerInit("D:/E/work/QT/TargetTracking_PTZ/image");
+   // CreateMainDir();
 
     Mat frame = Mat::zeros(640, 480, CV_8UC3);
     Mat hsv = Mat::zeros(640, 480, CV_8UC3);
@@ -213,6 +221,7 @@ int TargetTracking::tracking()
     bool paused = false;
     int frame_num = 0;
     int num_of_facedection = 0;
+    flag_of_new_target_ = 0;
 
 
     for (;;)
@@ -356,9 +365,14 @@ int TargetTracking::tracking()
 
 
                  ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
-                // rectangle(g_image,Point(statePt_.x-trackBox.size.width/2,statePt_.y-trackBox.size.height/2),Point(statePt_.x+trackBox.size.width/2,statePt_.y+trackBox.size.height/2),Scalar(255,0,0),2,8);
+                 rectangle(g_image,trackBox.boundingRect(),Scalar(255,0,0),2,8);
+                 if(!(frame_num%10))
+                 {
+                    Rect target = trackBox.boundingRect()&Rect(0,0,640,480);
+                    ImageControl(frame,flag_of_new_target_,target);
+                 }
 
-                    ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
+                 ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
         }
         else if (g_trackObject < 0)
             paused = false;
@@ -372,6 +386,7 @@ int TargetTracking::tracking()
 
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
+
 
         if(exit_flag_ == true)
         {

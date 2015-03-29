@@ -1,0 +1,40 @@
+#include"image_control_class.h"
+ImageControl::ImageControl(QString main_path):num_of_dir_(0),num_of_image_(0)
+{
+    file_ = new QDir(main_path_);
+    if(!file_->exists())
+        qWarning("can not find the main saving file");
+    if(!file_->makeAbsolute())
+        qWarning("can not be maken absolute");
+
+
+}
+
+void ImageControl::CreateMainDir()
+{
+    date = QDateTime::currentDateTime();
+    current_dir_ = date.toString("yyyy:MM:dd:hh:mm:ss");
+    file_->mkdir(current_dir_);
+    file_->cd(current_dir_);
+    current_path_ = file_->path();
+
+}
+
+ void ImageControl::CreateSubdir()
+ {
+     current_dir_ = QString::number(num_of_dir_);
+     file_->mkdir(current_dir_);
+     file_->cd(current_dir_);
+     num_of_dir_++;
+     current_path_ = file_->path();
+
+ }
+ 
+ void ImageControl::BackToMainDir()
+ {
+     file_->cdUp();
+     current_path_ = file_->path();
+ }
+ 
+ 
+ 

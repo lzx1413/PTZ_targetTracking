@@ -50,7 +50,8 @@ SOURCES       = ..\main.cpp \
 		..\information_feedback_class.cpp \
 		..\my_serialport_class.cpp \
 		..\PTZ_command_class.cpp \
-		..\FaceDection.cpp debug\qrc_resource.cpp \
+		..\FaceDection.cpp \
+		..\ImageCotroller.cpp debug\qrc_resource.cpp \
 		debug\moc_mainwindow.cpp \
 		debug\moc_targetTracking.cpp \
 		debug\moc_information_feedback_class.cpp \
@@ -64,6 +65,7 @@ OBJECTS       = debug\main.obj \
 		debug\my_serialport_class.obj \
 		debug\PTZ_command_class.obj \
 		debug\FaceDection.obj \
+		debug\ImageCotroller.obj \
 		debug\qrc_resource.obj \
 		debug\moc_mainwindow.obj \
 		debug\moc_targetTracking.obj \
@@ -175,7 +177,7 @@ dist:
 	$(ZIP) PTZ_TargetTracking.zip $(SOURCES) $(DIST) ..\PTZ_TargetTracking.pro C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\spec_pre.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\common\shell-win32.conf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\qconfig.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_clucene_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_declarative.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_declarative_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_enginio.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_enginio_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_platformsupport_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_webkit.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_webkit_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_webkitwidgets.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_webkitwidgets_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\qt_functions.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\qt_config.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\win32\qt_config.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\win32-msvc2013\qmake.conf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\spec_post.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\default_pre.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\resolve_config.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\default_post.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\build_pass.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\c++11.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\win32\console.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\win32\rtti.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\precompile_header.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\warn_on.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\qt.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\resources.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\moc.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\uic.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\exceptions.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\yacc.prf C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\mkspecs\features\lex.prf ..\PTZ_TargetTracking.pro ..\resource.qrc C:/Qt/Qt5.3.2/5.3/msvc2013_opengl/lib/Qt5Widgetsd.prl C:/Qt/Qt5.3.2/5.3/msvc2013_opengl/lib/Qt5Networkd.prl C:/Qt/Qt5.3.2/5.3/msvc2013_opengl/lib/Qt5SerialPortd.prl C:/Qt/Qt5.3.2/5.3/msvc2013_opengl/lib/Qt5Guid.prl C:/Qt/Qt5.3.2/5.3/msvc2013_opengl/lib/Qt5Cored.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug\main.obj debug\mainwindow.obj debug\stdafx.obj debug\targetTracking.obj debug\information_feedback_class.obj debug\my_serialport_class.obj debug\PTZ_command_class.obj debug\FaceDection.obj debug\qrc_resource.obj debug\moc_mainwindow.obj debug\moc_targetTracking.obj debug\moc_information_feedback_class.obj debug\moc_my_serialport_class.obj debug\moc_PTZ_command_class.obj
+	-$(DEL_FILE) debug\main.obj debug\mainwindow.obj debug\stdafx.obj debug\targetTracking.obj debug\information_feedback_class.obj debug\my_serialport_class.obj debug\PTZ_command_class.obj debug\FaceDection.obj debug\ImageCotroller.obj debug\qrc_resource.obj debug\moc_mainwindow.obj debug\moc_targetTracking.obj debug\moc_information_feedback_class.obj debug\moc_my_serialport_class.obj debug\moc_PTZ_command_class.obj
 	-$(DEL_FILE) debug\PTZ_TargetTracking.exp debug\PTZ_TargetTracking.ilk debug\PTZ_TargetTracking.idb debug\PTZ_TargetTracking.exe.embed.manifest debug\PTZ_TargetTracking.exe_manifest.rc debug\PTZ_TargetTracking.exe_manifest.res
 	-$(DEL_FILE) debug\myico.res
 
@@ -196,7 +198,8 @@ compiler_rcc_make_all: debug\qrc_resource.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) debug\qrc_resource.cpp
 debug\qrc_resource.cpp: ..\resource.qrc \
-		..\bg3.jpg
+		..\bg3.jpg \
+		..\2.jpg
 	C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\bin\rcc.exe -name resource ..\resource.qrc -o debug\qrc_resource.cpp
 
 compiler_moc_header_make_all: debug\moc_mainwindow.cpp debug\moc_targetTracking.cpp debug\moc_information_feedback_class.cpp debug\moc_my_serialport_class.cpp debug\moc_PTZ_command_class.cpp
@@ -306,6 +309,7 @@ debug\moc_mainwindow.cpp: C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtWidgets\QM
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtWidgets\qtabwidget.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtGui\qicon.h \
 		..\targetTracking.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
 		D:\opencv\build\include\opencv2\opencv.hpp \
 		D:\opencv\build\include\opencv2\core\core_c.h \
 		D:\opencv\build\include\opencv2\core\types_c.h \
@@ -343,12 +347,12 @@ debug\moc_mainwindow.cpp: C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtWidgets\QM
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QObject \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QByteArray \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QTimer \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtimer.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbasictimer.h \
@@ -356,7 +360,73 @@ debug\moc_mainwindow.cpp: C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtWidgets\QM
 		..\mainwindow.h
 	C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/mkspecs/win32-msvc2013 -ID:/E/work/QT/TargetTracking_PTZ -ID:/opencv/build/include -ID:/opencv/build/include/opencv -ID:/opencv/build/include/opencv2 -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtWidgets -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtNetwork -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtSerialPort -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtGui -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtCore -I. ..\mainwindow.h -o debug\moc_mainwindow.cpp
 
-debug\moc_targetTracking.cpp: D:\opencv\build\include\opencv2\opencv.hpp \
+debug\moc_targetTracking.cpp: C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdebug.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qalgorithms.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobal.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qconfig.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfeatures.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsystemdetection.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qprocessordetection.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcompilerdetection.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtypeinfo.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtypetraits.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsysinfo.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlogging.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qflags.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbasicatomic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qgenericatomic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_msvc.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv7.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv6.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv5.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_ia64.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_mips.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_x86.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_cxx11.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_gcc.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_unix.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobalstatic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmutex.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnumeric.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qhash.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qchar.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiterator.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlist.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qrefcount.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpair.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmap.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtextstream.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiodevice.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnamespace.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstring.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbytearray.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qarraydata.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringbuilder.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcoreevent.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qscopedpointer.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmetatype.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvarlengtharray.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontainerfwd.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qisenum.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject_impl.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlocale.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvariant.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringlist.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatastream.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qregexp.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringmatcher.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qshareddata.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvector.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpoint.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qset.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontiguouscache.h \
+		D:\opencv\build\include\opencv2\opencv.hpp \
 		D:\opencv\build\include\opencv2\core\core_c.h \
 		D:\opencv\build\include\opencv2\core\types_c.h \
 		D:\opencv\build\include\opencv2\core\core.hpp \
@@ -387,85 +457,20 @@ debug\moc_targetTracking.cpp: D:\opencv\build\include\opencv2\opencv.hpp \
 		..\PTZ_command_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\QSerialPort \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\qserialport.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiodevice.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobal.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qconfig.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfeatures.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsystemdetection.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qprocessordetection.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcompilerdetection.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtypeinfo.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtypetraits.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsysinfo.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlogging.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qflags.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbasicatomic.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_bootstrap.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qgenericatomic.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_msvc.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv7.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv6.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv5.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_ia64.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_mips.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_x86.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_cxx11.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_gcc.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_unix.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobalstatic.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmutex.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnumeric.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnamespace.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs_impl.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstring.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qchar.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbytearray.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qrefcount.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qarraydata.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringbuilder.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlist.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qalgorithms.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiterator.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcoreevent.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qscopedpointer.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmetatype.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvarlengtharray.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontainerfwd.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qisenum.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject_impl.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\qserialportglobal.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
 		..\my_serialport_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qshareddata.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer_impl.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qhash.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpair.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QObject \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QByteArray \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdebug.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmap.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtextstream.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlocale.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvariant.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringlist.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatastream.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qregexp.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringmatcher.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvector.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpoint.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qset.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontiguouscache.h \
 		..\targetTracking.h
 	C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/mkspecs/win32-msvc2013 -ID:/E/work/QT/TargetTracking_PTZ -ID:/opencv/build/include -ID:/opencv/build/include/opencv -ID:/opencv/build/include/opencv2 -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtWidgets -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtNetwork -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtSerialPort -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtGui -IC:/Qt/Qt5.3.2/5.3/msvc2013_opengl/include/QtCore -I. ..\targetTracking.h -o debug\moc_targetTracking.cpp
 
@@ -580,6 +585,7 @@ debug\moc_my_serialport_class.cpp: C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtC
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qisenum.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject_impl.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
@@ -650,6 +656,7 @@ debug\moc_PTZ_command_class.cpp: C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSer
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
@@ -815,6 +822,7 @@ debug\main.obj: ..\main.cpp ..\mainwindow.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtWidgets\qtabwidget.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtGui\qicon.h \
 		..\targetTracking.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
 		D:\opencv\build\include\opencv2\opencv.hpp \
 		D:\opencv\build\include\opencv2\core\core_c.h \
 		D:\opencv\build\include\opencv2\core\types_c.h \
@@ -852,12 +860,12 @@ debug\main.obj: ..\main.cpp ..\mainwindow.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QObject \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QByteArray \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QTimer \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtimer.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbasictimer.h \
@@ -975,6 +983,7 @@ debug\mainwindow.obj: ..\mainwindow.cpp ..\mainwindow.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtWidgets\qtabwidget.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtGui\qicon.h \
 		..\targetTracking.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
 		D:\opencv\build\include\opencv2\opencv.hpp \
 		D:\opencv\build\include\opencv2\core\core_c.h \
 		D:\opencv\build\include\opencv2\core\types_c.h \
@@ -1012,12 +1021,12 @@ debug\mainwindow.obj: ..\mainwindow.cpp ..\mainwindow.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QObject \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QByteArray \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QTimer \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtimer.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbasictimer.h \
@@ -1030,38 +1039,9 @@ debug\stdafx.obj: ..\stdafx.cpp ..\stdafx.h \
 		..\targetver.h
 
 debug\targetTracking.obj: ..\targetTracking.cpp ..\targetTracking.h \
-		D:\opencv\build\include\opencv2\opencv.hpp \
-		D:\opencv\build\include\opencv2\core\core_c.h \
-		D:\opencv\build\include\opencv2\core\types_c.h \
-		D:\opencv\build\include\opencv2\core\core.hpp \
-		D:\opencv\build\include\opencv2\core\version.hpp \
-		D:\opencv\build\include\opencv2\core\operations.hpp \
-		D:\opencv\build\include\opencv2\core\mat.hpp \
-		D:\opencv\build\include\opencv2\flann\miniflann.hpp \
-		D:\opencv\build\include\opencv2\flann\defines.h \
-		D:\opencv\build\include\opencv2\flann\config.h \
-		D:\opencv\build\include\opencv2\imgproc\imgproc_c.h \
-		D:\opencv\build\include\opencv2\imgproc\types_c.h \
-		D:\opencv\build\include\opencv2\imgproc\imgproc.hpp \
-		D:\opencv\build\include\opencv2\photo\photo.hpp \
-		D:\opencv\build\include\opencv2\photo\photo_c.h \
-		D:\opencv\build\include\opencv2\video\video.hpp \
-		D:\opencv\build\include\opencv2\video\tracking.hpp \
-		D:\opencv\build\include\opencv2\video\background_segm.hpp \
-		D:\opencv\build\include\opencv2\features2d\features2d.hpp \
-		D:\opencv\build\include\opencv2\objdetect\objdetect.hpp \
-		D:\opencv\build\include\opencv2\calib3d\calib3d.hpp \
-		D:\opencv\build\include\opencv2\ml\ml.hpp \
-		D:\opencv\build\include\opencv2\highgui\highgui_c.h \
-		D:\opencv\build\include\opencv2\highgui\highgui.hpp \
-		D:\opencv\build\include\opencv2\contrib\contrib.hpp \
-		D:\opencv\build\include\opencv2\contrib\retina.hpp \
-		D:\opencv\build\include\opencv2\contrib\openfabmap.hpp \
-		D:\opencv\build\include\opencv2\legacy\legacy.hpp \
-		..\PTZ_command_class.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\QSerialPort \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\qserialport.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiodevice.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdebug.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qalgorithms.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobal.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qconfig.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfeatures.h \
@@ -1090,19 +1070,23 @@ debug\targetTracking.obj: ..\targetTracking.cpp ..\targetTracking.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobalstatic.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmutex.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnumeric.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qhash.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qchar.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiterator.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlist.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qrefcount.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpair.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmap.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtextstream.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiodevice.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnamespace.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs_impl.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstring.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qchar.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbytearray.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qrefcount.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qarraydata.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringbuilder.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlist.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qalgorithms.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiterator.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcoreevent.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qscopedpointer.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmetatype.h \
@@ -1110,36 +1094,62 @@ debug\targetTracking.obj: ..\targetTracking.cpp ..\targetTracking.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontainerfwd.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qisenum.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject_impl.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\qserialportglobal.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
-		..\my_serialport_class.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
-		..\information_feedback_class.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qshareddata.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer_impl.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qhash.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpair.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QObject \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QByteArray \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDebug \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdebug.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmap.h \
-		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtextstream.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlocale.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvariant.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringlist.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatastream.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qregexp.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringmatcher.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qshareddata.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvector.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpoint.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qset.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontiguouscache.h \
+		D:\opencv\build\include\opencv2\opencv.hpp \
+		D:\opencv\build\include\opencv2\core\core_c.h \
+		D:\opencv\build\include\opencv2\core\types_c.h \
+		D:\opencv\build\include\opencv2\core\core.hpp \
+		D:\opencv\build\include\opencv2\core\version.hpp \
+		D:\opencv\build\include\opencv2\core\operations.hpp \
+		D:\opencv\build\include\opencv2\core\mat.hpp \
+		D:\opencv\build\include\opencv2\flann\miniflann.hpp \
+		D:\opencv\build\include\opencv2\flann\defines.h \
+		D:\opencv\build\include\opencv2\flann\config.h \
+		D:\opencv\build\include\opencv2\imgproc\imgproc_c.h \
+		D:\opencv\build\include\opencv2\imgproc\types_c.h \
+		D:\opencv\build\include\opencv2\imgproc\imgproc.hpp \
+		D:\opencv\build\include\opencv2\photo\photo.hpp \
+		D:\opencv\build\include\opencv2\photo\photo_c.h \
+		D:\opencv\build\include\opencv2\video\video.hpp \
+		D:\opencv\build\include\opencv2\video\tracking.hpp \
+		D:\opencv\build\include\opencv2\video\background_segm.hpp \
+		D:\opencv\build\include\opencv2\features2d\features2d.hpp \
+		D:\opencv\build\include\opencv2\objdetect\objdetect.hpp \
+		D:\opencv\build\include\opencv2\calib3d\calib3d.hpp \
+		D:\opencv\build\include\opencv2\ml\ml.hpp \
+		D:\opencv\build\include\opencv2\highgui\highgui_c.h \
+		D:\opencv\build\include\opencv2\highgui\highgui.hpp \
+		D:\opencv\build\include\opencv2\contrib\contrib.hpp \
+		D:\opencv\build\include\opencv2\contrib\retina.hpp \
+		D:\opencv\build\include\opencv2\contrib\openfabmap.hpp \
+		D:\opencv\build\include\opencv2\legacy\legacy.hpp \
+		..\PTZ_command_class.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\QSerialPort \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\qserialport.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtSerialPort\qserialportglobal.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
+		..\my_serialport_class.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
+		..\information_feedback_class.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QObject \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QByteArray \
 		..\FaceDetection.h \
 		D:\opencv\build\include\opencv\cv.h \
 		D:\opencv\build\include\opencv2\flann\flann.hpp \
@@ -1173,7 +1183,13 @@ debug\targetTracking.obj: ..\targetTracking.cpp ..\targetTracking.h \
 		D:\opencv\build\include\opencv2\flann\sampling.h \
 		D:\opencv\build\include\opencv2\legacy\compat.hpp \
 		D:\opencv\build\include\opencv2\core\internal.hpp \
-		D:\opencv\build\include\opencv2\core\eigen.hpp
+		D:\opencv\build\include\opencv2\core\eigen.hpp \
+		..\ImageController.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDir \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdir.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfileinfo.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfile.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfiledevice.h
 
 debug\information_feedback_class.obj: ..\information_feedback_class.cpp ..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
@@ -1309,6 +1325,7 @@ debug\my_serialport_class.obj: ..\my_serialport_class.cpp C:\Qt\Qt5.3.2\5.3\msvc
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
@@ -1375,6 +1392,7 @@ debug\PTZ_command_class.obj: ..\PTZ_command_class.cpp ..\PTZ_command_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QThread \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qthread.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QtGlobal \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QMutex \
 		..\information_feedback_class.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
@@ -1547,6 +1565,79 @@ debug\FaceDection.obj: ..\FaceDection.cpp ..\FaceDetection.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpoint.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qset.h \
 		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontiguouscache.h
+
+debug\ImageCotroller.obj: ..\ImageCotroller.cpp ..\ImageController.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDir \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdir.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstring.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qchar.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobal.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qconfig.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfeatures.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsystemdetection.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qprocessordetection.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcompilerdetection.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtypeinfo.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qtypetraits.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsysinfo.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlogging.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qflags.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbasicatomic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qgenericatomic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_msvc.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv7.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv6.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_armv5.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_ia64.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_mips.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_x86.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_cxx11.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_gcc.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qatomic_unix.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qglobalstatic.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmutex.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnumeric.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qbytearray.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qrefcount.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qnamespace.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qarraydata.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringbuilder.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfileinfo.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfile.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qfiledevice.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiodevice.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qlist.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qalgorithms.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qiterator.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcoreevent.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qscopedpointer.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qmetatype.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qvarlengtharray.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qcontainerfwd.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qisenum.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qobject_impl.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qshareddata.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringlist.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatastream.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qpair.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qregexp.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qstringmatcher.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QString \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\QDateTime \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qdatetime.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\include\QtCore\qhash.h \
+		D:\opencv\build\include\opencv2\core\core.hpp \
+		D:\opencv\build\include\opencv2\core\types_c.h \
+		D:\opencv\build\include\opencv2\core\version.hpp \
+		D:\opencv\build\include\opencv2\core\operations.hpp \
+		D:\opencv\build\include\opencv2\core\mat.hpp
 
 debug\qrc_resource.obj: debug\qrc_resource.cpp 
 
