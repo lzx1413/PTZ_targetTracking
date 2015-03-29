@@ -18,11 +18,13 @@ public:
     TargetTracking();
     ~TargetTracking();
     int tracking();  //追踪主函数
+    void FaceRecognizeTrain();
     void test();  //测试ptz控制算法函数
     void set_exit_flag();
     PTZCommand *ptz_command_;
     Point old_point_ = Point(320,240);  //上一个位置
     Point new_point_ = Point(320,240);//目前的位置
+    void set_num_of_template(int num);
 
 
 private:

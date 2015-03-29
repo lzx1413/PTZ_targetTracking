@@ -198,7 +198,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent*e)
 //}
 void MainWindow::OpenCamera()
 {
-    cam_ = cvCreateCameraCapture(2);//打开摄像头，从摄像头中获取视频
+    cam_ = cvCreateCameraCapture(0);//打开摄像头，从摄像头中获取视频
 
     timer_->start(33);              // 开始计时，超时则发出timeout()信号
 }

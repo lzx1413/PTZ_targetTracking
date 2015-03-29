@@ -1,11 +1,14 @@
 #include "targetTracking.h"
 #include  "FaceDetection.h"
 #include"ImageController.h"
+#include"FaceRecognition.h"
 static Rect g_selection;
 static bool g_selectObject = false;
 static Point g_origin;
 static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
+static bool flag_of_train = false;
+static int num_of_template = 0;
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 
 {
@@ -60,6 +63,7 @@ TargetTracking::TargetTracking()
 {
     ptz_command_ = new PTZCommand;
     //image_controller_ = new ImageController;
+    FaceRecognitionInit();
 }
 
 TargetTracking::~TargetTracking()
@@ -167,7 +171,7 @@ int TargetTracking::tracking()
 {
 
     CvCapture *cap = 0;
-    cap = cvCaptureFromCAM(0);
+    cap = cvCaptureFromCAM(1);
 
     if (!cap)
     {
@@ -368,8 +372,22 @@ int TargetTracking::tracking()
                  rectangle(g_image,trackBox.boundingRect(),Scalar(255,0,0),2,8);
                  if(!(frame_num%10))
                  {
+
                     Rect target = trackBox.boundingRect()&Rect(0,0,640,480);
+                    if(!flag_of_train)
+                    {
                     ImageControl(frame,flag_of_new_target_,target);
+                   LabelOfFace label= FaceRecognition(frame,target);
+                   if(label.label==1)
+                     {
+                       cout<<"you are my dear master"<<endl;
+                       //waitKey();
+                    }
+                    }
+                    else
+                    {
+                        SaveImageForTrain(frame,target,num_of_template);
+                    }
                  }
 
                  ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
@@ -427,4 +445,16 @@ int TargetTracking::tracking()
   g_selectObject = false;
   g_trackObject = 0 ;
 return 0;
+}
+
+void TargetTracking::FaceRecognizeTrain()
+{
+    flag_of_train = true;
+    tracking();
+    flag_of_train = false;
+}
+
+void set_number_of_template(int num)
+{
+    num_of_template = num;
 }

@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     my_serialport_class.cpp \
     PTZ_command_class.cpp \
     FaceDection.cpp \
-    ImageCotroller.cpp
+    ImageCotroller.cpp \
+    FaceRecongnition.cpp \
+    BrowseDir.cpp
 
 HEADERS  += mainwindow.h \
     stdafx.h \
@@ -35,7 +37,10 @@ HEADERS  += mainwindow.h \
     my_serialport_class.h \
     PTZ_command_class.h \
     FaceDetection.h \
-    ImageController.h
+    ImageController.h \
+    FaceRecognition.h \
+    BrowseDir.h \
+    StatDir.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include
