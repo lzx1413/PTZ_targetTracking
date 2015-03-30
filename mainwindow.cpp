@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->stop_tracking_,&QPushButton::clicked,target_,&TargetTracking::set_exit_flag);
 
     /****************窗口美化部分***************************/
-    //setWindowFlags(windowFlags() | Qt::FramelessWindowHint| Qt::WindowStaysOnTopHint);
     /****************窗口背景********************************/
 
     QPixmap pixmap = QPixmap("D:/bg3.jpg").scaled(this->size());
@@ -177,25 +176,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent*e)
 }
 
 
-
-//void MainWindow::DisplayMat(Mat mat)
-//{
-//     cv::Mat rgb;
-//     QImage img;
-//     if(mat.channels()==3)
-//     {
-//         cv::cvtColor(mat,rgb,CV_BGR2RGB);
-//         img = QImage((const uchar*)(rgb.data),rgb.cols,rgb.rows,rgb.cols*rgb.channels(),QImage::Format_RGB888);
-//     }
-//     else
-//     {
-//         img = QImage((const uchar*)(mat.data),mat.cols,mat.rows,mat.cols*mat.channels(),QImage::Format_Indexed8);
-//     }
-//     ui_->video->setPixmap(QPixmap::fromImage(img));
-//     ui_->video->resize(ui_->video->pixmap()->size());
-//     ui_->video->show();
-
-//}
 void MainWindow::OpenCamera()
 {
     cam_ = cvCreateCameraCapture(0);//打开摄像头，从摄像头中获取视频
@@ -203,9 +183,6 @@ void MainWindow::OpenCamera()
     timer_->start(33);              // 开始计时，超时则发出timeout()信号
 }
 
-/*********************************
-********* 读取摄像头信息 ***********
-**********************************/
 void MainWindow::ReadFrame()
 {
     frame_ = cvQueryFrame(cam_);// 从摄像头中抓取并返回每一帧
@@ -214,21 +191,14 @@ void MainWindow::ReadFrame()
     ui_->video->setPixmap(QPixmap::fromImage(image));  // 将图片显示到label上
 }
 
-/*************************
-********* 拍照 ***********
-**************************/
 void MainWindow::TakingPictures()
 {
 
 }
 
-/*******************************
-***关闭摄像头，释放资源，必须释放***
-********************************/
 void MainWindow::CloseCamera()
 {
-    timer_->stop();         // 停止读取数据。
-
-    cvReleaseCapture(&cam_);//释放内存；
+    timer_->stop();
+    cvReleaseCapture(&cam_);
 }
 

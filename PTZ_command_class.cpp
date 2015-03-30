@@ -81,6 +81,7 @@ void PTZCommand::PTZ_Init()
 
 void PTZCommand::Home(void)
 {
+    Stop();
     PanSpeedSet(800);
     waitKey(20);
     TiltSpeedSet(622);
@@ -96,8 +97,6 @@ void PTZCommand::Home(void)
 void PTZCommand::AutoLeft(bool is_stop,int stop_time )
 {
    Stop();
-   //waitKey(15);
-    // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00,0x60, 0x31,0x30, 0xEF };
     //PanSpeedSet(200);
     this->my_serial_port->msleep(5);
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
@@ -105,39 +104,28 @@ void PTZCommand::AutoLeft(bool is_stop,int stop_time )
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-   // this->my_serial_port->msleep(stop_time);
     if(is_stop)
     {
       Stop();
-      //this->my_serial_port->msleep(50);
       waitKey(20);
     }
-
-
-
     qDebug()<<"LEFT";
-   // this->comm->stop();
     this->my_serial_port->information_.InfoDisplay("Left");
 }
 
 void PTZCommand::AutoRight(bool is_stop ,int stop_time)
 {
    Stop();
-    //waitKey(15);
-    //char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x32, 0x30, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x31, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     qDebug()<<"Right"<<endl;
-   // this->comm->msleep(TimeStop);
-   // this->comm->stop();
     this->my_serial_port->msleep(stop_time);
     if(is_stop)
     {
       Stop();
-      //this->my_serial_port->msleep(50);
       waitKey(20);
     }
 
@@ -146,16 +134,12 @@ void PTZCommand::AutoRight(bool is_stop ,int stop_time)
 void PTZCommand::AutoUp(bool is_stop ,int stop_time )
 {
 
-Stop();
- //waitKey(15);
-   // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x31, 0xEF };
+    Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x33, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-    //this->comm->msleep(TimeStop);
-    //this->comm->stop();
     this->my_serial_port->msleep(stop_time);
     if(is_stop)
     {
@@ -171,16 +155,12 @@ void PTZCommand::AutoDown(bool is_stop ,int stop_time )
 {
 
 Stop();
- //waitKey(15);
-    //char command_data[8]= { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x32, 0xEF };
+
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x34, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-   // this->comm->msleep(TimeStop);
-   // this->comm->stop();
-   // this->my_serial_port->msleep(stop_time);
     if(is_stop)
     {
       Stop();
@@ -193,19 +173,14 @@ Stop();
 
 void PTZCommand::ManuLeft( )
 {
-   // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00,0x60, 0x31,0x30, 0xEF };
     Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-    //this->my_serial_port->msleep(500);
-
-   // this->my_serial_port->msleep(50);
      waitKey(200);
-   //  Stop();
-     waitKey(20);
+
 
 
 
@@ -216,7 +191,6 @@ void PTZCommand::ManuLeft( )
 
 void PTZCommand::ManuRight()
 {
-    //char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x32, 0x30, 0xEF };
     Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x31, 0xEF };
     this->my_serial_port->tx_data_.clear();
@@ -224,35 +198,19 @@ void PTZCommand::ManuRight()
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     qDebug()<<"Right"<<endl;
-   // this->comm->msleep(TimeStop);
-   // this->comm->stop();
-   // this->my_serial_port->msleep(500);
-
-    //this->my_serial_port->msleep(50);
     waitKey(200);
-  //  Stop();
-    waitKey(20);
-
 
 }
 
 void PTZCommand::ManuUp( )
 {
     Stop();
-    // char command_data[8] = { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x31, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x33, 0xEF };
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-    //this->comm->msleep(TimeStop);
-    //this->comm->stop();
-   // this->my_serial_port->msleep(500);
-
-    //this->my_serial_port->msleep(50);
     waitKey(200);
-   // Stop();
-    waitKey(20);
 }
 
 
@@ -265,14 +223,7 @@ void PTZCommand::ManuDown()
     this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-   // this->comm->msleep(TimeStop);
-   // this->comm->stop();
-   // this->my_serial_port->msleep(500);
-
-    //this->my_serial_port->msleep(50);
     waitKey(200);
-   // Stop();
-    waitKey(20);
 }
 void PTZCommand::Stop()
 {
@@ -424,8 +375,6 @@ void PTZCommand::FocusSet(double FocusNumber)
 
     char cZoomPos[5] = { 0 };
     int i = 0;
-
-    //Set manual focus mode
     FocusSetMF();
 
     char command_data[6];
@@ -450,16 +399,11 @@ void PTZCommand::FocusSet(double FocusNumber)
     this->my_serial_port->tx_data_.append(command_data, 10);
     this->my_serial_port->ChangeTxState(true);
 
-    //return to auto focus mode
-    //FocusSetAF();
 }
 void PTZCommand::PanSpeedSet(int PanSpeed)//8-800
 {
     char cPanSpeed[5] = { 0 };
     int i = 0;
-
-    //Set manual focus mode
-   // FocusSetMF();
 
     char command_data[7];
     _itoa(PanSpeed, cPanSpeed, 16);
@@ -489,7 +433,6 @@ void PTZCommand::PanSpeedSet(int PanSpeed)//8-800
 
         memcpy(command_data + 5, cPanSpeed, 3);
     }
-//    memcpy(command_data + 6, cZoomPos, 3);
 
     command_data[8] = 0xEF;
     this->my_serial_port->request_data_.clear();
@@ -531,7 +474,6 @@ void PTZCommand::TiltSpeedSet(int TiltSpeed)//8-622
 
         memcpy(command_data + 5, cTiltSpeed, 3);
     }
-//    memcpy(command_data + 6, cZoomPos, 3);
 
     command_data[8] = 0xEF;
     this->my_serial_port->request_data_.clear();
@@ -565,7 +507,6 @@ void PTZCommand::GetPTZFocusRange(int *nMinValue, int *nMaxValue)
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-   // my_serial_port->msleep(50);
     waitKey(20);
 
     is_response_length = my_serial_port->request_data_.size();
@@ -623,7 +564,6 @@ double PTZCommand::GetPTZPanAngle(void)
     int is_response_length = 0;
     char  cangle[5] = { 0 };
     double cpan_angle = 0.0;
-   // int istep = 0;
     char command_data[6] = { 0 };
     command_data[0] = 0xFF;
     command_data[1] = 0x30;
@@ -635,7 +575,6 @@ double PTZCommand::GetPTZPanAngle(void)
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 6);
     this->my_serial_port->ChangeTxState(true);
-    //my_serial_port->msleep(50);
     waitKey(20);
     qDebug()<<"rxevent is"<<my_serial_port->rx_event_;
     my_serial_port->rx_event_ = false;
@@ -644,7 +583,6 @@ double PTZCommand::GetPTZPanAngle(void)
 
     if (is_response_length == 14)
     {
-//        memcpy(cangle, comm->request_data_ + 5, 4);
         for(int i = 0;i<4;i++)
         {
            cangle[i] = my_serial_port->request_data_[i+5] ;
@@ -682,7 +620,6 @@ double PTZCommand::GetPTZTiltAngle(void)
     int is_response_length = 0;
     char  cangle[5] = { 0 };
     double ctilt_angle = 0.0;
-   // int istep = 0;
     char command_data[6] = { 0x00 };
     command_data[0] = 0xFF;
     command_data[1] = 0x30;
@@ -694,8 +631,6 @@ double PTZCommand::GetPTZTiltAngle(void)
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 6);
     this->my_serial_port->ChangeTxState(true);
-  //  my_serial_port->msleep(500);
-
     is_response_length = my_serial_port->request_data_.size();
 
     if (is_response_length == 14)
@@ -747,7 +682,6 @@ double PTZCommand::GetPTZTiltAngle(void)
    this->my_serial_port->tx_data_.clear();
    this->my_serial_port->tx_data_.append(command_data, 6);
    this->my_serial_port->ChangeTxState(true);
- //  my_serial_port->msleep(800);
    waitKey(20);
    qDebug()<<"resize is"<<my_serial_port->request_data_.size();
    is_response_length = my_serial_port->request_data_.size();
@@ -804,7 +738,6 @@ int PTZCommand::GetPTZFocusPos(void)
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
-   // my_serial_port->msleep(500);
     waitKey(20);
 
     is_response_length = my_serial_port->request_data_.size();
@@ -850,11 +783,6 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
     int i = 0;
     char command_data[14] = {0x00};
 
-    //double Pixelrate = 15;
-    //double rotatecpan_angle = (360 - ClickedPoint.x)/Pixelrate;
-    //double rotatectilt_angle = (ClickedPoint.y - 240)/Pixelrate;
-
-    //rotate PTZ
     double curcpan_angle = GetPTZPanAngle();
     if ((curcpan_angle >101) || (curcpan_angle <-101))
         return false;
@@ -878,9 +806,6 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
     command_data[2] = 0x30;
     command_data[3] = 0x00;
     command_data[4] = 0x62;
-
-//    memcpy(command_data + 5, ccpan_angle, 4);
-//    memcpy(command_data + 9, cctilt_angle, 4);
     for(int  i = 0;i<4;i++)
     {
         command_data[i+5] = ccpan_angle[i];
@@ -894,8 +819,6 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
     this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 14);
     this->my_serial_port->ChangeTxState(true);
-  //  my_serial_port->msleep(50);
-
 
 }
 
@@ -951,7 +874,7 @@ void PTZCommand::PTZcontrol(Point oldPoint, Point newPoint,int frame_num)
             {
                 tilt_speed = (abs(set_point_.y)*0.6*2*0.85*0.85);//*0.8*0.2*2);
             }
-            // TiltSpeed = (abs(newPoint.y-oldPoint.y)*0.6*0.8);
+
             TiltSpeedSet( tilt_speed);                                                     //Not modified?
             waitKey(15);
 
@@ -961,7 +884,7 @@ void PTZCommand::PTZcontrol(Point oldPoint, Point newPoint,int frame_num)
     last_x_state_2=last_x_state_;
     last_y_state_2=last_y_state_;
     last_y_state_ = now_y_state_;
-    last_x_state_ = now_x_state_;//comm->stop();
+    last_x_state_ = now_x_state_;
     }
 }
 }
@@ -993,8 +916,6 @@ void PTZCommand::AutoTurn(int now_x,int now_y,int last_x,int last_y)
                 AutoLeft(false,5);
             }
         }
-
-    //
 
     if(last_y*now_y<0)
             {

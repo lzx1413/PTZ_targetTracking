@@ -1,7 +1,7 @@
 #include"ImageController.h"
 #include<opencv2/opencv.hpp>
-const int DST_IMG_WIDTH =  92;
-const int DST_IMG_HEIGH= 112;
+const int DST_IMG_WIDTH =  112;
+const int DST_IMG_HEIGH= 92;
 static QDir* file_ ;
 static QString current_dir_;
 static QString subdir_name_;
