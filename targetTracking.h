@@ -25,8 +25,10 @@ public:
     Point old_point_ = Point(320,240);  //上一个位置
     Point new_point_ = Point(320,240);//目前的位置
     void set_num_of_template(int num);
+    Mat ReturnNoramlizedImage();
 
-
+signals:
+    void GetFaceName();
 private:
 
     void DrawCross( Point center, Scalar color,int d );  //画粒子
@@ -51,6 +53,7 @@ private:
     int  new_target_area_ = 0;
     int origin_area_ = 0;
     Point stable_point_ = Point(320,240);
+    Mat face;
   //  ImageController* image_controller_;
 
 };

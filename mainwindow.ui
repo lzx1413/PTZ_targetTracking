@@ -333,7 +333,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
+   <widget class="QGroupBox" name="model_train">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -404,6 +404,45 @@
      </property>
      <property name="text">
       <string>take picture</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="photo1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>550</y>
+       <width>101</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="name1">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>620</y>
+       <width>72</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>520</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>train</string>
      </property>
     </widget>
    </widget>

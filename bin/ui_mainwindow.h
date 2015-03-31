@@ -72,11 +72,14 @@ public:
     QLabel *label_7;
     QLabel *label_8;
     QPushButton *PTZ_down;
-    QGroupBox *groupBox_2;
+    QGroupBox *model_train;
     QLabel *video;
     QPushButton *startvideo;
     QPushButton *closevideo;
     QPushButton *takepic;
+    QLabel *photo1;
+    QLabel *name1;
+    QPushButton *pushButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -314,24 +317,33 @@ public:
 
         gridLayout_3->addWidget(groupBox, 1, 0, 1, 1);
 
-        groupBox_2 = new QGroupBox(centralWidget);
-        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(440, 10, 661, 671));
-        groupBox_2->setFlat(false);
-        video = new QLabel(groupBox_2);
+        model_train = new QGroupBox(centralWidget);
+        model_train->setObjectName(QStringLiteral("model_train"));
+        model_train->setGeometry(QRect(440, 10, 661, 671));
+        model_train->setFlat(false);
+        video = new QLabel(model_train);
         video->setObjectName(QStringLiteral("video"));
         video->setGeometry(QRect(10, 20, 640, 480));
         video->setPixmap(QPixmap(QString::fromUtf8(":/picture/2.jpg")));
         video->setScaledContents(true);
-        startvideo = new QPushButton(groupBox_2);
+        startvideo = new QPushButton(model_train);
         startvideo->setObjectName(QStringLiteral("startvideo"));
         startvideo->setGeometry(QRect(10, 520, 101, 28));
-        closevideo = new QPushButton(groupBox_2);
+        closevideo = new QPushButton(model_train);
         closevideo->setObjectName(QStringLiteral("closevideo"));
         closevideo->setGeometry(QRect(150, 520, 101, 28));
-        takepic = new QPushButton(groupBox_2);
+        takepic = new QPushButton(model_train);
         takepic->setObjectName(QStringLiteral("takepic"));
         takepic->setGeometry(QRect(300, 520, 111, 28));
+        photo1 = new QLabel(model_train);
+        photo1->setObjectName(QStringLiteral("photo1"));
+        photo1->setGeometry(QRect(10, 550, 101, 91));
+        name1 = new QLabel(model_train);
+        name1->setObjectName(QStringLiteral("name1"));
+        name1->setGeometry(QRect(120, 620, 72, 15));
+        pushButton = new QPushButton(model_train);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(470, 520, 93, 28));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -374,11 +386,14 @@ public:
         label_7->setText(QApplication::translate("MainWindow", "8", 0));
         label_8->setText(QApplication::translate("MainWindow", "622", 0));
         PTZ_down->setText(QApplication::translate("MainWindow", "DW", 0));
-        groupBox_2->setTitle(QApplication::translate("MainWindow", "video", 0));
+        model_train->setTitle(QApplication::translate("MainWindow", "video", 0));
         video->setText(QString());
         startvideo->setText(QApplication::translate("MainWindow", "start video", 0));
         closevideo->setText(QApplication::translate("MainWindow", "close video", 0));
         takepic->setText(QApplication::translate("MainWindow", "take picture", 0));
+        photo1->setText(QString());
+        name1->setText(QString());
+        pushButton->setText(QApplication::translate("MainWindow", "train", 0));
     } // retranslateUi
 
 };

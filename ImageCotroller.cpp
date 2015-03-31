@@ -16,7 +16,7 @@ void MakeDirName(QString name)
 }
 void ImageControllerInit(QString main_path)
 {
-    main_path_ = main_path;
+    main_path_ = "D:/E/work/QT/TargetTracking_PTZ/FaceLib";
     file_ = new QDir(main_path);
        if(!file_->exists())
            qWarning("can not find the main saving file");
@@ -60,7 +60,7 @@ void CreateMainDir()
      current_path_ = file_->path();
  }
 
- void ImageControl( Mat& frame,bool &flag,Rect rec )
+Mat ImageControl( Mat& frame,bool &flag,Rect rec )
  {
     if(flag)
     {
@@ -74,20 +74,21 @@ void CreateMainDir()
     itoa(num_of_image_,a,10);
     num_of_image_++;
     std::string img_name = current_path_.toStdString()+"/ "+a+".bmp";
-    cvtColor(face,face, CV_RGB2GRAY);
+    //cvtColor(face,face, CV_RGB2GRAY);
     imwrite(img_name,face);
     img_name.clear();
+    return face;
 
 
  }
- void SaveImageForTrain ( Mat& frame,Rect rec,int num_of_temp)
+void  SaveImageForTrain ( Mat& frame,Rect rec,int num_of_temp)
  {
     char b[1];
     itoa(num_of_temp,b,10);
     char a[1] ;
     itoa(num_of_image_,a,10);
     num_of_image_++;
-    std::string img_name = main_path_.toStdString()+"/"+a+"/"+a+".bmp";
+    std::string img_name = main_path_.toStdString()+"/"+b+"/"+a+".bmp";
     resize(frame(rec),face,face.size(),0,0,INTER_LINEAR);
     cvtColor(face,face, CV_RGB2GRAY);
     imwrite(img_name,face);

@@ -7,7 +7,7 @@ Ptr<FaceRecognizer> model;
 Mat face;
 void FaceRecognitionInit()
 {
-    model = createEigenFaceRecognizer();
+    model =createLBPHFaceRecognizer();
     cout << "Loading Model" << endl;
     model->load(path_of_model);
     cout << "Model Loaded" << endl;
@@ -44,10 +44,11 @@ void TrainingModle( int FaceNum )
         }
         cout << file_vec.size() << " images." << endl;
     }
-    Ptr<FaceRecognizer> model = createEigenFaceRecognizer();//80 Principal components
+    Ptr<FaceRecognizer> model = createLBPHFaceRecognizer();
     cout << "train" << endl;
     model->train(images, labels);
     model->save(path_of_model);
+    cout <<"model train finished"<<endl;
 }
 
 LabelOfFace FaceRecognition(Mat& frame, Rect rec)

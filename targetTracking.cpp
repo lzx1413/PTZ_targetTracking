@@ -376,13 +376,14 @@ int TargetTracking::tracking()
                     Rect target = trackBox.boundingRect()&Rect(0,0,640,480);
                     if(!flag_of_train)
                     {
-                    ImageControl(frame,flag_of_new_target_,target);
-                   LabelOfFace label= FaceRecognition(frame,target);
-                   if(label.label==1)
+                       face = ImageControl(frame,flag_of_new_target_,target);
+                       LabelOfFace label= FaceRecognition(frame,target);
+                       if(label.label==1)
                      {
                        cout<<"you are my dear master"<<endl;
-                       //waitKey();
-                    }
+                       emit GetFaceName();
+
+                     }
                     }
                     else
                     {
@@ -457,4 +458,10 @@ void TargetTracking::FaceRecognizeTrain()
 void set_number_of_template(int num)
 {
     num_of_template = num;
+}
+
+Mat TargetTracking::ReturnNoramlizedImage()
+{
+
+    return face;
 }

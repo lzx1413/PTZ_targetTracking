@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->TiltSpeed->setMinimum(8);
     ui_->TiltSpeed->setValue(622);
     connect(this->ui_->PanSpeed,&QSlider::valueChanged,target_->ptz_command_,&PTZCommand::PanSpeedSet);
-     connect(this->ui_->TiltSpeed,&QSlider::valueChanged,target_->ptz_command_,&PTZCommand::TiltSpeedSet);
+    connect(this->ui_->TiltSpeed,&QSlider::valueChanged,target_->ptz_command_,&PTZCommand::TiltSpeedSet);
     connect(this->ui_->ZoomChange,&QSlider::valueChanged,target_->ptz_command_,&PTZCommand::ZoomSet);
     connect(this->ui_->ZoomChange,&QSlider::valueChanged,this->ui_->ZoomNumber,&QSpinBox::setValue);
     connect(this->ui_->comOpen,&QPushButton::clicked,target_->ptz_command_->my_serial_port,&MySerialPort::StartCom);
@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 /***********************信息显示部分****************************/
 connect(&this->target_->ptz_command_->my_serial_port->information_,&InformationFeedback::GetInfomation,ui_->infoDisplay,&QTextEdit::append);
-
+connect(this->target_,&TargetTracking::GetFaceName,this,&MainWindow::ShowFaceName);
 /************************键盘控制相关变量***********************/
 keypressflag_ = false;
 up_pressed = false;
@@ -86,7 +86,8 @@ connect(ui_->takepic, &QPushButton::clicked, this, &MainWindow::TakingPictures);
 connect(ui_->closevideo, &QPushButton::clicked, this, &MainWindow::CloseCamera);
 
 }
-
+/************************训练******************************/
+//connect(ui_->model_train,&QPushButton::clicked,&TrainingModlezz(2));
 MainWindow::~MainWindow()
 {
     delete ui_;
@@ -193,7 +194,7 @@ void MainWindow::ReadFrame()
 
 void MainWindow::TakingPictures()
 {
-
+ //TODO 截图
 }
 
 void MainWindow::CloseCamera()
@@ -202,3 +203,13 @@ void MainWindow::CloseCamera()
     cvReleaseCapture(&cam_);
 }
 
+void MainWindow::ShowFaceName()
+{
+    face_ =target_->ReturnNoramlizedImage();
+   // cvtColor(face_,face_,CV_BGR2RGBA);
+    face2show_ = QImage((const unsigned char*)(face_.data), face_.cols, face_.rows, QImage::Format_RGB888).rgbSwapped();
+    ui_->photo1->setPixmap(QPixmap::fromImage(face2show_));
+    ui_->photo1->resize(ui_->photo1->pixmap()->size());
+    ui_->name1->setText("lzx");
+
+}

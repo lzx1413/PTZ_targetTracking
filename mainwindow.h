@@ -27,6 +27,7 @@ private slots:
     void ReadFrame(void);
     void CloseCamera();
     void TakingPictures();
+    void ShowFaceName();
 
 
 private:
@@ -35,6 +36,8 @@ private:
     QImage *imag_;
     CvCapture *cam_;
     IplImage  *frame_;
+    Mat face_;
+    QImage face2show_;
     bool keypressflag_;
     bool up_pressed;
     bool down_pressed;
