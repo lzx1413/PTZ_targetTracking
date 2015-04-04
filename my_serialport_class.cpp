@@ -59,7 +59,7 @@ void MySerialPort::run()
             qDebug() << "arr size:" << this->tx_data_.length();
 
             my_serialport->write(this->tx_data_);//发送数据
-
+            tx_data_.clear();
             if (my_serialport->waitForBytesWritten(50))
             {
                 qDebug() << "Brush:" << "send data success";
@@ -67,14 +67,14 @@ void MySerialPort::run()
                 {
                     qDebug()<<"have received data";
 
-                   information_.InfoDisplay("have received data\n");
+                    information_.InfoDisplay("have received data\n");
 
                     rx_event_ = true;
                     request_data_ = my_serialport->readAll();//获得回复数据
                     while (my_serialport->waitForReadyRead(15))
                         request_data_ += my_serialport->readAll();
                     emit(this->ComRecive());//发出收到回复的信号
-                    qDebug()<<request_data_.toHex().data()<<request_data_.size()<<endl;
+                    qDebug()<<get_request_data_().toHex().data()<<get_request_data_().size()<<endl;
                 }
 
                 else
@@ -84,6 +84,7 @@ void MySerialPort::run()
                    information_.feedback_information_.append("com wait return time out\n");
                    information_.InfoChanged();
                 }
+                   request_data_.clear();
             }
             else
             {
@@ -96,13 +97,12 @@ void MySerialPort::run()
 
         /*没有发送数据而收到数据时的操作*/
 
-        if (my_serialport->waitForReadyRead(5))  //50m
+        if (my_serialport->waitForReadyRead(50))  //50m
         {
 
             while (my_serialport->waitForReadyRead(5))
                 this->msleep(20);
             request_data_ = my_serialport->readAll();
-            emit(this->ComRecive());
 
         }
         if (com_stopped_&&com_opened_)
@@ -115,10 +115,12 @@ void MySerialPort::run()
 
 void MySerialPort::StopCom()
 {
+    mutex.lock();
     com_stopped_ = true;
     information_.feedback_information_.clear();
-    information_.feedback_information_.append("com has been closed\n");
+    information_.feedback_information_.append("Stop the PTZ");
     information_.InfoChanged();
+    mutex.unlock();
 
 }
 void MySerialPort::StartCom()
@@ -158,4 +160,16 @@ void MySerialPort::ChangeRxState(bool stat)
     mutex.lock();
     rx_event_ = stat;
     mutex.unlock();
+}
+void MySerialPort::set_tx_data_(QByteArray a)
+{
+    mutex.lock();
+    tx_data_ = a;
+    mutex.unlock();
+}
+
+QByteArray MySerialPort::get_request_data_()
+{
+  return request_data_;
+
 }

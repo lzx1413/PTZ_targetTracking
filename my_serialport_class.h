@@ -16,8 +16,6 @@ class MySerialPort : public QThread
 public:
     MySerialPort();
     ~MySerialPort();
-    QByteArray request_data_;  //串口回复的数据
-    QByteArray tx_data_;  //向串口发送的数据
     volatile bool rx_event_;  //串口回复状态
     QString port_num_;  //串口名称
     InformationFeedback information_; //反馈信息
@@ -28,6 +26,10 @@ public:
     void ChangeTxState(bool stat);  //改变发送状态
     void ChangeRxState(bool stat);  //改变回复状态
     void ChangeComState(bool stat);  //改变串口状态
+    QByteArray get_request_data_();
+    void set_tx_data_(QByteArray a);
+     QByteArray request_data_;  //串口回复的数据
+     QByteArray tx_data_;  //向串口发送的数据
 
 signals:
 	void request(const QString &s);
@@ -41,6 +43,7 @@ private:
     volatile bool com_opened_;
     volatile bool com_stopped_;
     volatile bool tx_event_;
+
     QMutex mutex;
 
 };

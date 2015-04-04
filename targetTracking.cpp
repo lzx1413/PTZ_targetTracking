@@ -344,7 +344,7 @@ int TargetTracking::tracking()
                 circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
                 circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
                 if (backproj_mode_)
-                    cvtColor(backproj, g_image, COLOR_GRAY2BGR);
+                cvtColor(backproj, g_image, COLOR_GRAY2BGR);
                  new_target_area_ = trackBox.size.area();
                // g_trackObject = target_miss_config();
                 old_target_area_ = new_target_area_;
@@ -382,6 +382,7 @@ int TargetTracking::tracking()
                      {
                        cout<<"you are my dear master"<<endl;
                        emit GetFaceName();
+                       label.label = 0;
 
                      }
                     }
