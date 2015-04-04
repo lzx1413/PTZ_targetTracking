@@ -36,7 +36,7 @@ signals:
     void ComRecive();
 
 protected:
-	void run();
+    void run()noexcept;
 
 private:
     QString message_str_ ;

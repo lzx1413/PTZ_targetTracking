@@ -76,10 +76,12 @@ public:
     QLabel *video;
     QPushButton *startvideo;
     QPushButton *closevideo;
-    QPushButton *takepic;
+    QPushButton *training;
     QLabel *photo1;
     QLabel *name1;
-    QPushButton *pushButton;
+    QPushButton *flag_of_training;
+    QSpinBox *template_num_;
+    QLabel *label_9;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -319,7 +321,7 @@ public:
 
         model_train = new QGroupBox(centralWidget);
         model_train->setObjectName(QStringLiteral("model_train"));
-        model_train->setGeometry(QRect(440, 10, 661, 671));
+        model_train->setGeometry(QRect(440, 10, 811, 671));
         model_train->setFlat(false);
         video = new QLabel(model_train);
         video->setObjectName(QStringLiteral("video"));
@@ -332,18 +334,24 @@ public:
         closevideo = new QPushButton(model_train);
         closevideo->setObjectName(QStringLiteral("closevideo"));
         closevideo->setGeometry(QRect(150, 520, 101, 28));
-        takepic = new QPushButton(model_train);
-        takepic->setObjectName(QStringLiteral("takepic"));
-        takepic->setGeometry(QRect(300, 520, 111, 28));
+        training = new QPushButton(model_train);
+        training->setObjectName(QStringLiteral("training"));
+        training->setGeometry(QRect(480, 520, 111, 28));
         photo1 = new QLabel(model_train);
         photo1->setObjectName(QStringLiteral("photo1"));
         photo1->setGeometry(QRect(10, 550, 101, 91));
         name1 = new QLabel(model_train);
         name1->setObjectName(QStringLiteral("name1"));
         name1->setGeometry(QRect(120, 620, 72, 15));
-        pushButton = new QPushButton(model_train);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(470, 520, 93, 28));
+        flag_of_training = new QPushButton(model_train);
+        flag_of_training->setObjectName(QStringLiteral("flag_of_training"));
+        flag_of_training->setGeometry(QRect(310, 520, 93, 28));
+        template_num_ = new QSpinBox(model_train);
+        template_num_->setObjectName(QStringLiteral("template_num_"));
+        template_num_->setGeometry(QRect(660, 70, 71, 22));
+        label_9 = new QLabel(model_train);
+        label_9->setObjectName(QStringLiteral("label_9"));
+        label_9->setGeometry(QRect(660, 30, 141, 31));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -390,10 +398,11 @@ public:
         video->setText(QString());
         startvideo->setText(QApplication::translate("MainWindow", "start video", 0));
         closevideo->setText(QApplication::translate("MainWindow", "close video", 0));
-        takepic->setText(QApplication::translate("MainWindow", "take picture", 0));
+        training->setText(QApplication::translate("MainWindow", "train", 0));
         photo1->setText(QString());
         name1->setText(QString());
-        pushButton->setText(QApplication::translate("MainWindow", "train", 0));
+        flag_of_training->setText(QApplication::translate("MainWindow", "train flag", 0));
+        label_9->setText(QApplication::translate("MainWindow", "template number", 0));
     } // retranslateUi
 
 };
