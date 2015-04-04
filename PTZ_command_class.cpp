@@ -21,6 +21,7 @@ PTZCommand::PTZCommand()
 
 PTZCommand::~PTZCommand()
 {
+    my_serial_port->exit();
     delete my_serial_port;
 }
 
@@ -52,8 +53,6 @@ void PTZCommand::PTZ_Init()
 {
      //1.主机控制模式
     char  command_data_1[7] = { 0xFF, 0x30, 0x30, 0x00, 0x90, 0x30, 0xEF};
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data_1, 7);
     this->my_serial_port->ChangeTxState(true);
     this->my_serial_port->msleep(20);
@@ -63,8 +62,6 @@ void PTZCommand::PTZ_Init()
     //2.信号反馈设置
     //writestring = "FF 30 30 00 94 31 EF";
     char command_data_2[7] = {0xFF, 0x30, 0x30, 0x00, 0x94, 0x31, 0xEF};
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data_2, 7);
     this->my_serial_port->ChangeTxState(true);
     this->my_serial_port->msleep(20);
@@ -72,8 +69,6 @@ void PTZCommand::PTZ_Init()
     //3. 打开摄像头
     //    writestring = "FF 30 30 00 A0 31 EF";
     char command_data_3[7 ] = {0xFF, 0x30, 0x30, 0x00, 0x94, 0x31, 0xEF};
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data_3, 7);
     this->my_serial_port->ChangeTxState(true);
      waitKey(20);
@@ -88,20 +83,14 @@ void PTZCommand::Home(void)
     waitKey(20);
 
     char command_data[6] = { 0xFF, 0x30, 0x30, 0x00, 0x57, 0xEF};
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 6);
     this->my_serial_port->ChangeTxState(true);
 }
 
 void PTZCommand::AutoLeft(bool is_stop,int stop_time )
 {
-   Stop();
-    //PanSpeedSet(200);
     this->my_serial_port->msleep(5);
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     if(is_stop)
@@ -115,10 +104,7 @@ void PTZCommand::AutoLeft(bool is_stop,int stop_time )
 
 void PTZCommand::AutoRight(bool is_stop ,int stop_time)
 {
-   Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x31, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     qDebug()<<"Right"<<endl;
@@ -134,17 +120,13 @@ void PTZCommand::AutoRight(bool is_stop ,int stop_time)
 void PTZCommand::AutoUp(bool is_stop ,int stop_time )
 {
 
-    Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x33, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     this->my_serial_port->msleep(stop_time);
     if(is_stop)
     {
       Stop();
-     // this->my_serial_port->msleep(50);
       waitKey(20);
     }
 
@@ -154,17 +136,12 @@ void PTZCommand::AutoUp(bool is_stop ,int stop_time )
 void PTZCommand::AutoDown(bool is_stop ,int stop_time )
 {
 
-Stop();
-
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x34, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     if(is_stop)
     {
       Stop();
-      //this->my_serial_port->msleep(50);
       waitKey(20);
     }
 
@@ -175,17 +152,10 @@ void PTZCommand::ManuLeft( )
 {
     Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
      waitKey(200);
-
-
-
-
-    qDebug()<<"LEFT";
-   // this->comm->stop();
+     qDebug()<<"LEFT";
     this->my_serial_port->information_.InfoDisplay("Left");
 }
 
@@ -193,8 +163,6 @@ void PTZCommand::ManuRight()
 {
     Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x31, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     qDebug()<<"Right"<<endl;
@@ -206,8 +174,6 @@ void PTZCommand::ManuUp( )
 {
     Stop();
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x33, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     waitKey(200);
@@ -217,10 +183,7 @@ void PTZCommand::ManuUp( )
 void PTZCommand::ManuDown()
 {
     Stop();
-    //char command_data[8]= { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30, 0x32, 0xEF };
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x34, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     waitKey(200);
@@ -228,8 +191,6 @@ void PTZCommand::ManuDown()
 void PTZCommand::Stop()
 {
     char command_data[8]= { 0xFF, 0x30, 0x30, 0x00, 0x60, 0x30,0x30, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 8);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -257,8 +218,6 @@ void PTZCommand::PosSet(double cpan_angle, double ctilt_angle)
     memcpy(command_data + 5, ccpan_angle, 4);
     memcpy(command_data + 9, cctilt_angle, 4);
     command_data[13] = 0xEF;
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 14);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -269,8 +228,6 @@ void PTZCommand::ZoomIn(void)//放大
 {
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA2, 0x34,  0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -279,8 +236,6 @@ void PTZCommand::ZoomOut(void)//缩小
 {
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA2, 0x33,0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -313,8 +268,6 @@ void PTZCommand::ZoomSet(int zoomNumber)
     }
 
     command_data[7] = 0xEF;
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 8);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -323,8 +276,6 @@ void PTZCommand::ZoomStop(void)
 {
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA2, 0x30, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -334,8 +285,6 @@ void PTZCommand::FocusFar(void)//聚焦于远点
 
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA1, 0x33, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -344,8 +293,6 @@ void PTZCommand::FocusNear(void)//聚焦于近点
 {
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA1, 0x32, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -353,8 +300,6 @@ void PTZCommand::FocusSetMF(void)//调节为手动对焦模式
 {
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA1, 0x31, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -363,8 +308,6 @@ void PTZCommand::FocusSetMF(void)//调节为手动对焦模式
 void PTZCommand::FocusSetAF(void)//调节为自动对焦模式
 {
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0xA1, 0x30, 0xEF };
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
 }
@@ -393,9 +336,6 @@ void PTZCommand::FocusSet(double FocusNumber)
     memcpy(command_data + 6, cZoomPos, 3);
 
     command_data[9] = 0xEF;
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 10);
     this->my_serial_port->ChangeTxState(true);
 
@@ -435,9 +375,6 @@ void PTZCommand::PanSpeedSet(int PanSpeed)//8-800
     }
 
     command_data[8] = 0xEF;
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 9);
     this->my_serial_port->ChangeTxState(true);
 
@@ -476,9 +413,6 @@ void PTZCommand::TiltSpeedSet(int TiltSpeed)//8-622
     }
 
     command_data[8] = 0xEF;
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
-    this->my_serial_port->request_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 9);
     this->my_serial_port->ChangeTxState(true);
 
@@ -502,9 +436,6 @@ void PTZCommand::GetPTZFocusRange(int *nMinValue, int *nMaxValue)
     command_data[5] = 0x32;
     command_data[6] = 0xEF;
 
-
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     waitKey(20);
@@ -571,8 +502,6 @@ double PTZCommand::GetPTZPanAngle(void)
     command_data[3] = 0x00;
     command_data[4] = 0x63;
     command_data[5] = 0xEF;
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 6);
     this->my_serial_port->ChangeTxState(true);
     waitKey(20);
@@ -627,8 +556,6 @@ double PTZCommand::GetPTZTiltAngle(void)
     command_data[3] = 0x00;
     command_data[4] = 0x63;
     command_data[5] = 0xEF;
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 6);
     this->my_serial_port->ChangeTxState(true);
     is_response_length = my_serial_port->request_data_.size();
@@ -678,9 +605,6 @@ double PTZCommand::GetPTZTiltAngle(void)
    command_data[4] = 0xA4;
    command_data[5] = 0xEF;
 
-   this->my_serial_port->request_data_.clear();
-   this->my_serial_port->tx_data_.clear();
-   this->my_serial_port->tx_data_.append(command_data, 6);
    this->my_serial_port->ChangeTxState(true);
    waitKey(20);
    qDebug()<<"resize is"<<my_serial_port->request_data_.size();
@@ -734,8 +658,6 @@ int PTZCommand::GetPTZFocusPos(void)
     command_data[6] = 0xEF;
 
 
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 7);
     this->my_serial_port->ChangeTxState(true);
     waitKey(20);
@@ -815,8 +737,6 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
         command_data[i+9] = ccpan_angle[i];
     }
     command_data[13] = 0xEF;
-    this->my_serial_port->request_data_.clear();
-    this->my_serial_port->tx_data_.clear();
     this->my_serial_port->tx_data_.append(command_data, 14);
     this->my_serial_port->ChangeTxState(true);
 

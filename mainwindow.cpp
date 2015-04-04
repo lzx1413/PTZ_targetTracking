@@ -206,7 +206,6 @@ void MainWindow::CloseCamera()
 void MainWindow::ShowFaceName()
 {
     face_ =target_->ReturnNoramlizedImage();
-   // cvtColor(face_,face_,CV_BGR2RGBA);
     face2show_ = QImage((const unsigned char*)(face_.data), face_.cols, face_.rows, QImage::Format_RGB888).rgbSwapped();
     ui_->photo1->setPixmap(QPixmap::fromImage(face2show_));
     ui_->photo1->resize(ui_->photo1->pixmap()->size());
