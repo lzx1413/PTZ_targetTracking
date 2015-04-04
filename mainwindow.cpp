@@ -82,12 +82,13 @@ timer_ = new QTimer(this);
 imag_ = new QImage();
 connect(this->timer_,&QTimer::timeout,this,&MainWindow::ReadFrame);
 connect(ui_->startvideo, &QPushButton::clicked, this, &MainWindow::OpenCamera);
-connect(ui_->takepic, &QPushButton::clicked, this, &MainWindow::TakingPictures);
 connect(ui_->closevideo, &QPushButton::clicked, this, &MainWindow::CloseCamera);
-
-}
 /************************训练******************************/
-//connect(ui_->model_train,&QPushButton::clicked,&TrainingModlezz(2));
+connect(ui_->flag_of_training,&QPushButton::clicked,target_,&TargetTracking::set_flag_of_train);
+
+connect(ui_->training,&QPushButton::clicked,this->target_,&TargetTracking::TrainingModelOfFace);
+connect(ui_->template_num_,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),this->target_,&TargetTracking::set_num_of_template);
+}
 MainWindow::~MainWindow()
 {
     delete ui_;

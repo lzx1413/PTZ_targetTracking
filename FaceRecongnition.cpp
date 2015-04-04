@@ -1,5 +1,4 @@
 #include"FaceRecognition.h"
-#include "StatDir.h"
 static const int num_of_template = 2;
 static const string path_of_model = "D:\\E\\work\\QT\\TargetTracking_PTZ\\FaceLib\\facereco.xml";
 const static 	string dir = "D:\\E\\work\\QT\\TargetTracking_PTZ\\";

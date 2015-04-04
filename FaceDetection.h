@@ -7,7 +7,7 @@
 #include <assert.h> //用于防御式编程
 using namespace cv;
 using namespace std;
-CvSeq * FaceDetect( IplImage *image);
+CvSeq *FaceDetect( IplImage *image);
 CvRect GetFaceRoi(  IplImage *img);
 void CascadeInit();
 #endif // FACEDETECTION_H

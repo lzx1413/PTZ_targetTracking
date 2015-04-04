@@ -6,6 +6,7 @@
 #include <cv.h>
 #include <vector>
 #include <utility>
+#include "StatDir.h"
 using namespace cv;
 using namespace std;
 struct LabelOfFace

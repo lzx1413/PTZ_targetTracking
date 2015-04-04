@@ -14,7 +14,7 @@ void CascadeInit()
     }
 }
 
-CvSeq *FaceDetect(IplImage *img) //检测和画出人脸的函数体
+CvSeq* FaceDetect(IplImage *img) //检测和画出人脸的函数体
 {
     //随机颜色
 
@@ -38,6 +38,8 @@ CvSeq *FaceDetect(IplImage *img) //检测和画出人脸的函数体
         cvReleaseImage(&gray);
         return faces;
     }
+    return NULL;
+
 }
 
 CvRect GetFaceRoi(IplImage *frame)

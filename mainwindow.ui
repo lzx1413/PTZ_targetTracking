@@ -338,7 +338,7 @@
      <rect>
       <x>440</x>
       <y>10</y>
-      <width>661</width>
+      <width>811</width>
       <height>671</height>
      </rect>
     </property>
@@ -393,17 +393,17 @@
       <string>close video</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="takepic">
+    <widget class="QPushButton" name="training">
      <property name="geometry">
       <rect>
-       <x>300</x>
+       <x>480</x>
        <y>520</y>
        <width>111</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
-      <string>take picture</string>
+      <string>train</string>
      </property>
     </widget>
     <widget class="QLabel" name="photo1">
@@ -432,17 +432,40 @@
       <string/>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="flag_of_training">
      <property name="geometry">
       <rect>
-       <x>470</x>
+       <x>310</x>
        <y>520</y>
        <width>93</width>
        <height>28</height>
       </rect>
      </property>
      <property name="text">
-      <string>train</string>
+      <string>train flag</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="template_num_">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>70</y>
+       <width>71</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>30</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>template number</string>
      </property>
     </widget>
    </widget>

@@ -9,14 +9,15 @@ static QString current_path_;
 static int num_of_image_ = 0;
 static int num_of_dir_ = 0;
 static Mat face;
-static QString main_path_;
+static QString path_of_template;
+static QString path_of_image;
 void MakeDirName(QString name)
 {
 
 }
 void ImageControllerInit(QString main_path)
 {
-    main_path_ = "D:/E/work/QT/TargetTracking_PTZ/FaceLib";
+    path_of_template = "D:/E/work/QT/TargetTracking_PTZ/FaceLib";
     file_ = new QDir(main_path);
        if(!file_->exists())
            qWarning("can not find the main saving file");
@@ -24,6 +25,7 @@ void ImageControllerInit(QString main_path)
            qWarning("can not be maken absolute");
        CreateMainDir();
        CreateSubdir();
+       path_of_image = file_->path();
        face = Mat::zeros(DST_IMG_WIDTH,DST_IMG_HEIGH,CV_8UC3);
 }
 
@@ -53,25 +55,17 @@ void CreateMainDir()
 
  }
 
- void BackToMainDir()
- {
-     file_->cdUp();
-     current_path_.clear();
-     current_path_ = file_->path();
- }
-
 Mat ImageControl( Mat& frame,bool &flag,Rect rec )
  {
     if(flag)
     {
-        BackToMainDir();
-        CreateSubdir();
-        flag = !flag;
+        file_->cd(path_of_image);
+        current_path_=file_->path();
         num_of_image_ =0;
     }
     resize(frame(rec),face,face.size(),0,0,INTER_LINEAR);
     char a[1] ;
-    itoa(num_of_image_,a,10);
+    _itoa(num_of_image_,a,10);
     num_of_image_++;
     std::string img_name = current_path_.toStdString()+"/ "+a+".bmp";
     //cvtColor(face,face, CV_RGB2GRAY);
@@ -81,14 +75,20 @@ Mat ImageControl( Mat& frame,bool &flag,Rect rec )
 
 
  }
-void  SaveImageForTrain ( Mat& frame,Rect rec,int num_of_temp)
+void  SaveImageForTrain ( Mat& frame,Rect rec,int num_of_temp,bool flag_of_train)
  {
-    char b[1];
-    itoa(num_of_temp,b,10);
+    if(flag_of_train)
+    {
+       file_->cd(path_of_template);
+       QString current_dir = QString::number(num_of_temp);
+       file_->mkdir(current_dir);
+       file_->cd(current_dir);
+       current_path_ = file_->path();
+    }
     char a[1] ;
-    itoa(num_of_image_,a,10);
+    _itoa(num_of_image_,a,10);
     num_of_image_++;
-    std::string img_name = main_path_.toStdString()+"/"+b+"/"+a+".bmp";
+    std::string img_name = current_path_.toStdString()+"/"+a+".bmp";
     resize(frame(rec),face,face.size(),0,0,INTER_LINEAR);
     cvtColor(face,face, CV_RGB2GRAY);
     imwrite(img_name,face);

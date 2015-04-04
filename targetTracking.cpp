@@ -7,8 +7,6 @@ static bool g_selectObject = false;
 static Point g_origin;
 static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
-static bool flag_of_train = false;
-static int num_of_template = 0;
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 
 {
@@ -62,7 +60,6 @@ inline static CvRect RectChange(CvRect &rec ,float scale)
 TargetTracking::TargetTracking()
 {
     ptz_command_ = new PTZCommand;
-    //image_controller_ = new ImageController;
     FaceRecognitionInit();
 }
 
@@ -103,11 +100,11 @@ void TargetTracking::set_exit_flag()
 }
 
 //用于判断跟踪是否失败
-int TargetTracking::target_miss_config()
+bool TargetTracking::target_miss_config()
 {
     if( get_point_distace(new_point_,old_point_)> 640||((float)new_target_area_/(float)old_target_area_)>2||((float)new_target_area_/(float)old_target_area_)<0.8)
     {
-        return 0;
+        return false;
     }
 }
 
@@ -133,18 +130,8 @@ bool TargetTracking::face_config(IplImage *frame)
 void TargetTracking::PTZReposition()
 {
 
-
-        ptz_command_->Stop();
-        waitKey(20);
         ptz_command_->Home();
         waitKey(20);
-
-        ptz_command_->PanSpeedSet(800);
-        waitKey(20);
-        ptz_command_->TiltSpeedSet(600);
-        waitKey(3000);
-        qDebug()<<ptz_command_->GetPTZPanAngle()<<ptz_command_->GetPTZFocusPos();
-
 }
 
 void TargetTracking::UpdateStablePoint()
@@ -170,6 +157,8 @@ void TargetTracking::GetPredictPoint()
 int TargetTracking::tracking()
 {
 
+    qDebug()<<num_of_template<<"ge subdir";
+    waitKey();
     CvCapture *cap = 0;
     cap = cvCaptureFromCAM(1);
 
@@ -212,7 +201,6 @@ int TargetTracking::tracking()
 
 
     ImageControllerInit("D:/E/work/QT/TargetTracking_PTZ/image");
-   // CreateMainDir();
 
     Mat frame = Mat::zeros(640, 480, CV_8UC3);
     Mat hsv = Mat::zeros(640, 480, CV_8UC3);
@@ -230,8 +218,6 @@ int TargetTracking::tracking()
 
     for (;;)
     {
-      //
-
         if (!paused)
         {
             face_frame = cvRetrieveFrame(cap);
@@ -364,7 +350,6 @@ int TargetTracking::tracking()
                 if(g_trackObject == 0)
                 {
                     num_of_facedection = 0;
-                    PTZReposition();
                 }
 
 
@@ -376,7 +361,9 @@ int TargetTracking::tracking()
                     Rect target = trackBox.boundingRect()&Rect(0,0,640,480);
                     if(!flag_of_train)
                     {
+                      // waitKey();
                        face = ImageControl(frame,flag_of_new_target_,target);
+                       flag_of_new_target_= false;
                        LabelOfFace label= FaceRecognition(frame,target);
                        if(label.label==1)
                      {
@@ -388,7 +375,8 @@ int TargetTracking::tracking()
                     }
                     else
                     {
-                        SaveImageForTrain(frame,target,num_of_template);
+                        SaveImageForTrain(frame,target,num_of_template,flag_of_train);
+                        flag_of_new_target_  = true;
                     }
                  }
 
@@ -440,6 +428,7 @@ int TargetTracking::tracking()
         }
     }
 
+
 }
   destroyWindow("TargetTracking");
   destroyWindow("mask");
@@ -449,20 +438,24 @@ int TargetTracking::tracking()
 return 0;
 }
 
-void TargetTracking::FaceRecognizeTrain()
-{
-    flag_of_train = true;
-    tracking();
-    flag_of_train = false;
-}
-
-void set_number_of_template(int num)
-{
-    num_of_template = num;
-}
 
 Mat TargetTracking::ReturnNoramlizedImage()
 {
 
     return face;
+}
+
+void TargetTracking::set_flag_of_train()
+{
+    flag_of_train = !flag_of_train;
+    num_of_template++;
+}
+
+void TargetTracking::TrainingModelOfFace()
+{
+    TrainingModle(num_of_template);
+}
+void TargetTracking::set_num_of_template(int num)
+{
+    num_of_template = num;
 }
