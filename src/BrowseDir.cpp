@@ -12,7 +12,7 @@ CBrowseDir::CBrowseDir()
 	_getcwd(m_szInitDir, _MAX_PATH);
 	int len = strlen(m_szInitDir);
 	if (m_szInitDir[len - 1] != '\\')
-		strcat(m_szInitDir, "\\");
+        strcat_s(m_szInitDir, "\\");
 }
 
 bool CBrowseDir::SetInitDir(const char *dir)
@@ -24,7 +24,7 @@ bool CBrowseDir::SetInitDir(const char *dir)
 		return false;
 	int len = strlen(m_szInitDir);
 	if (m_szInitDir[len - 1] != '\\')
-		strcat(m_szInitDir, "\\");
+        strcat_s(m_szInitDir, "\\");
 
 	return true;
 }
@@ -53,8 +53,8 @@ bool CBrowseDir::BrowseDir(const char *dir, const char *filespec)
 			if (!(fileinfo.attrib & _A_SUBDIR))
 			{
 				char filename[_MAX_PATH];
-				strcpy(filename, dir);
-				strcat(filename, fileinfo.name);
+                strcpy_s(filename, dir);
+                strcat_s(filename, fileinfo.name);
 				cout << filename << endl;
 				if (!ProcessFile(filename))
 					return false;
@@ -73,9 +73,9 @@ bool CBrowseDir::BrowseDir(const char *dir, const char *filespec)
 					(fileinfo.name, "..") != 0)
 				{
 					char subdir[_MAX_PATH];
-					strcpy(subdir, dir);
-					strcat(subdir, fileinfo.name);
-					strcat(subdir, "\\");
+                    strcpy_s(subdir, dir);
+                    strcat_s(subdir, fileinfo.name);
+                    strcat_s(subdir, "\\");
 					ProcessDir(subdir, dir);
 					if (!BrowseDir(subdir, filespec))
 						return false;
@@ -102,9 +102,8 @@ vector<char*> CBrowseDir::GetDirFilenames(const char *dir, const char *filespec)
 			if (!(fileinfo.attrib & _A_SUBDIR))
 			{
 				char *filename = new char[_MAX_PATH];
-				strcpy(filename, dir);
-				//int st = 0;	while (dir[st++]!='\0');
-				strcat(filename, fileinfo.name); //filename[st]='\0';
+                strcpy(filename, dir);
+                strcat(filename, fileinfo.name);
 				filename_vec.push_back(filename);
 			}
 		} while (_findnext(hFile, &fileinfo) == 0);
@@ -121,9 +120,9 @@ vector<char*> CBrowseDir::GetDirFilenames(const char *dir, const char *filespec)
 					(fileinfo.name, "..") != 0)
 				{
 					char subdir[_MAX_PATH];
-					strcpy(subdir, dir);
-					strcat(subdir, fileinfo.name);
-					strcat(subdir, "\\");
+                    strcpy_s(subdir, dir);
+                    strcat_s(subdir, fileinfo.name);
+                    strcat_s(subdir, "\\");
 					ProcessDir(subdir, dir);
 					return GetDirFilenames(subdir, filespec);
 				}

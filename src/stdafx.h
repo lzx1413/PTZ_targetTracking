@@ -30,12 +30,7 @@ typedef unsigned long POINTER_64_INT;
 #define POINTER_32
 #endif
 #endif
-
 #include "targetver.h"
-//#include<opencv2/core/core.hpp>
+
 #include <stdio.h>
-//#include <tchar.h>
 
-
-
-// TODO: 在此处引用程序需要的其他头文件

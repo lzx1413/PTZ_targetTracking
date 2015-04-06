@@ -82,6 +82,9 @@ public:
     QPushButton *flag_of_training;
     QSpinBox *template_num_;
     QLabel *label_9;
+    QLabel *label_10;
+    QLineEdit *name_of_face_;
+    QPushButton *test_button_;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -352,6 +355,15 @@ public:
         label_9 = new QLabel(model_train);
         label_9->setObjectName(QStringLiteral("label_9"));
         label_9->setGeometry(QRect(660, 30, 141, 31));
+        label_10 = new QLabel(model_train);
+        label_10->setObjectName(QStringLiteral("label_10"));
+        label_10->setGeometry(QRect(660, 110, 111, 16));
+        name_of_face_ = new QLineEdit(model_train);
+        name_of_face_->setObjectName(QStringLiteral("name_of_face_"));
+        name_of_face_->setGeometry(QRect(660, 130, 113, 21));
+        test_button_ = new QPushButton(model_train);
+        test_button_->setObjectName(QStringLiteral("test_button_"));
+        test_button_->setGeometry(QRect(660, 160, 71, 28));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -403,6 +415,8 @@ public:
         name1->setText(QString());
         flag_of_training->setText(QApplication::translate("MainWindow", "train flag", 0));
         label_9->setText(QApplication::translate("MainWindow", "template number", 0));
+        label_10->setText(QApplication::translate("MainWindow", "Add a Name", 0));
+        test_button_->setText(QApplication::translate("MainWindow", "test", 0));
     } // retranslateUi
 
 };

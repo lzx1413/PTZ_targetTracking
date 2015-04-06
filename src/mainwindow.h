@@ -28,8 +28,6 @@ private slots:
     void CloseCamera();
     void TakingPictures();
     void ShowFaceName();
-
-
 private:
     Ui::MainWindow *ui_;
     QTimer *timer_;
@@ -38,11 +36,12 @@ private:
     IplImage  *frame_;
     Mat face_;
     QImage face2show_;
-    bool keypressflag_;
-    bool up_pressed;
-    bool down_pressed;
-    bool right_pressed;
-    bool left_pressed;
+    bool keypressflag_ = false;
+    bool up_pressed = false;
+    bool down_pressed = false;
+    bool right_pressed=false;
+    bool left_pressed = false;
+    bool space_pressed = false;
 };
 
 #endif // MAINWINDOW_H

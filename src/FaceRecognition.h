@@ -9,6 +9,7 @@
 #include "StatDir.h"
 using namespace cv;
 using namespace std;
+//用于表示人脸识别结果
 struct LabelOfFace
 {
     int label;

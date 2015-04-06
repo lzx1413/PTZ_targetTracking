@@ -2,7 +2,6 @@
 #include <QApplication>
 #include <opencv2/opencv.hpp>
 #include"targetTracking.h"
-//#include "image_controller_class.h"
 using namespace cv;
 int main(int argc, char *argv[])
 {

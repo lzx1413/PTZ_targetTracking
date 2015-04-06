@@ -11,10 +11,6 @@ static int num_of_dir_ = 0;
 static Mat face;
 static QString path_of_template;
 static QString path_of_image;
-void MakeDirName(QString name)
-{
-
-}
 void ImageControllerInit(QString main_path)
 {
     path_of_template = "D:/E/work/QT/TargetTracking_PTZ/FaceLib";

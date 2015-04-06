@@ -8,6 +8,8 @@
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/legacy/legacy.hpp>
 #include"PTZ_command_class.h"
+#include<qmap.h>
+#include"FaceRecognition.h"
 using namespace cv;
 using namespace std;
 
@@ -23,23 +25,26 @@ public:
     PTZCommand *ptz_command_;
     Point old_point_ = Point(320,240);  //上一个位置
     Point new_point_ = Point(320,240);//目前的位置
-
+    void TestFunction();//测试新函数的函数
     Mat ReturnNoramlizedImage();
     void  set_flag_of_train();
     void TrainingModelOfFace();
     void  set_num_of_template(int num);
+    void  AddFaceName(QString name);
+    QString GetNameOfList() ;
+    void set_target_rect(int x_,int y_,int width_,int height_);
 signals:
     void GetFaceName();
 
 private:
     void DrawCross( Point center, Scalar color,int d );  //画粒子
-    bool face_config(IplImage * frame);
+    bool face_config(IplImage * frame, Rect rect);
     void PTZReposition();
     void GetPredictPoint();
     int  iAbsolute(int a, int b);  //作差求绝对值
     bool target_miss_config();//确定是否丢失目标
     void UpdateStablePoint();
-    int num_of_template ;
+    int num_of_template  = 2;
     bool backproj_mode_  = false;
     bool show_hist_ = true;  //是否显示直方图
     bool flag_of_new_target_ = true;
@@ -56,7 +61,9 @@ private:
     int origin_area_ = 0;
     Point stable_point_ = Point(320,240);
     Mat face;
-  //  ImageController* image_controller_;
+    QMap<int,QString> face_name_list_;
+    LabelOfFace face_labe_;
+    Rect target_rect_;
 };
 
 inline int get_point_distace(Point A,Point B)

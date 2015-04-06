@@ -7,7 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
-//    ptzComm = new PTZComm;
     target_ = new TargetTracking;
 
     ui_->infoDisplay->setTextColor(QColor(255,255,255));
@@ -70,11 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
 connect(&this->target_->ptz_command_->my_serial_port->information_,&InformationFeedback::GetInfomation,ui_->infoDisplay,&QTextEdit::append);
 connect(this->target_,&TargetTracking::GetFaceName,this,&MainWindow::ShowFaceName);
 /************************键盘控制相关变量***********************/
-keypressflag_ = false;
-up_pressed = false;
-down_pressed = false;
-right_pressed = false;
-left_pressed = false;
+
 
 /**********************视频显示*************************/
 cam_ = NULL;
@@ -85,9 +80,12 @@ connect(ui_->startvideo, &QPushButton::clicked, this, &MainWindow::OpenCamera);
 connect(ui_->closevideo, &QPushButton::clicked, this, &MainWindow::CloseCamera);
 /************************训练******************************/
 connect(ui_->flag_of_training,&QPushButton::clicked,target_,&TargetTracking::set_flag_of_train);
-
+connect(ui_->name_of_face_,&QLineEdit::textChanged,this->target_,&TargetTracking::AddFaceName);
 connect(ui_->training,&QPushButton::clicked,this->target_,&TargetTracking::TrainingModelOfFace);
 connect(ui_->template_num_,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),this->target_,&TargetTracking::set_num_of_template);
+
+/************************其他*********************************/
+connect(ui_->test_button_,&QPushButton::clicked,this->target_,&TargetTracking::TestFunction);
 }
 MainWindow::~MainWindow()
 {
@@ -135,6 +133,14 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         left_pressed = true;
         }
     }
+    if(e->key()==Qt::Key_Space&&!e->isAutoRepeat())
+    {
+        if(!keypressflag_)
+        {
+        target_->ptz_command_->Home();
+        space_pressed = true;
+        }
+    }
 
     keypressflag_ = true;
 }
@@ -173,6 +179,14 @@ void MainWindow::keyReleaseEvent(QKeyEvent*e)
         left_pressed=false;
         }
     }
+    if(e->key()==Qt::Key_Space&&space_pressed&&!e->isAutoRepeat())
+    {
+        if(keypressflag_)
+        {
+        target_->ptz_command_->Stop();
+        space_pressed=false;
+        }
+    }
 
     keypressflag_ = false;
 }
@@ -182,12 +196,12 @@ void MainWindow::OpenCamera()
 {
     cam_ = cvCreateCameraCapture(0);//打开摄像头，从摄像头中获取视频
 
-    timer_->start(33);              // 开始计时，超时则发出timeout()信号
+    timer_->start(33);
 }
 
 void MainWindow::ReadFrame()
 {
-    frame_ = cvQueryFrame(cam_);// 从摄像头中抓取并返回每一帧
+    frame_ = cvQueryFrame(cam_);
     // 将抓取到的帧，转换为QImage格式。QImage::Format_RGB888不同的摄像头用不同的格式。
      QImage image = QImage((const uchar*)frame_->imageData, frame_->width, frame_->height, QImage::Format_RGB888).rgbSwapped();
     ui_->video->setPixmap(QPixmap::fromImage(image));  // 将图片显示到label上
@@ -210,6 +224,6 @@ void MainWindow::ShowFaceName()
     face2show_ = QImage((const unsigned char*)(face_.data), face_.cols, face_.rows, QImage::Format_RGB888).rgbSwapped();
     ui_->photo1->setPixmap(QPixmap::fromImage(face2show_));
     ui_->photo1->resize(ui_->photo1->pixmap()->size());
-    ui_->name1->setText("lzx");
+    ui_->name1->setText(target_->GetNameOfList());
 
 }

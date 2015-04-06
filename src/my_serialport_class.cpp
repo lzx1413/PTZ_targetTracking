@@ -63,7 +63,7 @@ void MySerialPort::run()
             if (my_serialport->waitForBytesWritten(50))
             {
                 qDebug() << "Brush:" << "send data success";
-                if (my_serialport->waitForReadyRead(1000))  //1s
+                if (my_serialport->waitForReadyRead(1000))
                 {
                     qDebug()<<"have received data";
 
@@ -71,8 +71,6 @@ void MySerialPort::run()
 
                     rx_event_ = true;
                     request_data_ = my_serialport->readAll();//获得回复数据
-                   // while (my_serialport->waitForReadyRead(15))
-                   //     request_data_ += my_serialport->readAll();
                     emit(this->ComRecive());//发出收到回复的信号
                     qDebug()<<get_request_data_().toHex().data()<<get_request_data_().size()<<endl;
                 }

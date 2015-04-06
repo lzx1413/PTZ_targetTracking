@@ -20,30 +20,29 @@ public:
     QString port_num_;  //串口名称
     InformationFeedback information_; //反馈信息
     void SetMessage(const QString &message);
-    void SetPortnum(const QString &num);  //设置串口名称
-    void StopCom();  //暂停串口
-    void StartCom();  //打开串口
-    void ChangeTxState(bool stat);  //改变发送状态
-    void ChangeRxState(bool stat);  //改变回复状态
-    void ChangeComState(bool stat);  //改变串口状态
+    void SetPortnum(const QString &num);
+    void StopCom();
+    void StartCom();
+    void ChangeTxState(bool stat);
+    void ChangeRxState(bool stat);
+    void ChangeComState(bool stat);
     QByteArray get_request_data_();
     void set_tx_data_(QByteArray a);
-     QByteArray request_data_;  //串口回复的数据
-     QByteArray tx_data_;  //向串口发送的数据
+    QByteArray request_data_;  //串口回复的数据
+    QByteArray tx_data_;  //向串口发送的数据
 
 signals:
 	void request(const QString &s);
     void ComRecive();
 
 protected:
-    void run()noexcept;
+    void run();
 
 private:
     QString message_str_ ;
     volatile bool com_opened_;
     volatile bool com_stopped_;
     volatile bool tx_event_;
-
     QMutex mutex;
 
 };

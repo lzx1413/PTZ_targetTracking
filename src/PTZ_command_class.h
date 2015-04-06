@@ -19,10 +19,10 @@ public:
     void PTZ_Init(void);  //ptz初始化
     void Home(void);  //返回home(0,0)处
     void AutoTurn(int now_x,int now_y,int last_x,int last_y);
-    void AutoLeft(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向左转
+    void AutoLeft(bool is_stop = true);  //自动追踪时开始向左转
     void AutoRight(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向右转
     void AutoUp(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向上转
-    void AutoDown(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向下转
+    void AutoDown(bool is_stop = true);  //自动追踪时开始向下转
     void ManuLeft();  //手动追踪时开始向左转
     void ManuRight();  //手动追踪时开始向右转
     void ManuUp();  //手动追踪时开始向上转
@@ -47,9 +47,7 @@ public:
     int GetPTZFocusPos(void);  //获得当前聚焦位置
     void GetPTZFocusRange(int *nMinValue, int *nMaxValue);  //获得聚焦位置范围
     bool ReturnPTZ(const double Panangle, const double Tiltangle);  //根据当前位置设置下一步位置
-	//bool ReturnPTZ(const CvPoint ClickedPoint);
     void DisplayRxData();
-   // QByteArray commData;
     void Point2Point(Point oldpoint);
 
 signals:

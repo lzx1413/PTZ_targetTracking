@@ -1,12 +1,17 @@
 #include "targetTracking.h"
 #include  "FaceDetection.h"
 #include"ImageController.h"
-#include"FaceRecognition.h"
 static Rect g_selection;
 static bool g_selectObject = false;
 static Point g_origin;
 static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
+static int num_of_lost = 0;
+void TargetTracking::TestFunction()
+{
+    qDebug()<<face_name_list_.values();
+    qDebug()<<num_of_template;
+}
 static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取目标的回调函数
 
 {
@@ -16,7 +21,6 @@ static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取�
         g_selection.y = MIN(y, g_origin.y);
         g_selection.width = std::abs(x - g_origin.x);
         g_selection.height = std::abs(y - g_origin.y);
-
         g_selection &= Rect(0, 0, g_image.cols, g_image.rows);
     }
 
@@ -44,7 +48,6 @@ inline static CvRect RectChange(CvRect &rec ,float scale)
     tem.y  = static_cast<int>(rec.y-rec.height*(scale-1)/2);
     tem.width = static_cast<int>(rec.width*scale);
     tem.height = static_cast<int>(rec.height*scale);
-  //  tem = tem&(cvRect(0,0,640,480));
    if(tem.x<0)
        tem.x = 0;
    if(tem.y<0)
@@ -61,12 +64,13 @@ TargetTracking::TargetTracking()
 {
     ptz_command_ = new PTZCommand;
     FaceRecognitionInit();
+    face_name_list_[1] = "LZXxxxx";
+    face_name_list_[2] = "LT";
 }
 
 TargetTracking::~TargetTracking()
 {
     delete ptz_command_;
-    //delete image_controller_;
 }
 
 void TargetTracking::DrawCross( Point center, Scalar color,int d )
@@ -106,22 +110,36 @@ bool TargetTracking::target_miss_config()
     {
         return false;
     }
+    else
+        return true;
 }
 
 //判断当前目标是否包含脸
-bool TargetTracking::face_config(IplImage *frame)
+bool TargetTracking::face_config(IplImage *frame,Rect rect)
 {
-
-       CvRect faces = GetFaceRoi(frame);
+       CvRect rect_ = cvRect(rect.x,rect.y,rect.width,rect.height);
+       CvRect face_rect = RectChange(rect_,1.3);
+       CvRect faces = GetFaceRoi(frame,face_rect);
        if(faces.height == 0)
-            return false;
+            num_of_lost++;
+       if(num_of_lost>5)
+       {
+           num_of_lost=0;
+           return false;
+
+       }
 
        else
-       {/*
-           trackBox.center = Point(faces.x+0.5*faces.width,faces.y+0.5*faces.height);
-           trackBox.size.width = faces.width;
-           trackBox.size.height = faces.height;
-           stable_point_ =  Point(faces.x+0.5*faces.width,faces.y+0.5*faces.height);*/
+       {
+          // target_rect_.x = faces.x;
+          // target_rect_.y= faces.y;
+          // target_rect_.width = faces.width;
+          // target_rect_.height = faces.height;
+          // stable_point_ =  Point(faces.x+0.5*faces.width,faces.y+0.5*faces.height);
+           qDebug()<<target_rect_.x<<target_rect_.y<<target_rect_.width<<target_rect_.height;
+           qDebug()<<faces.x<<faces.y<<faces.width<<faces.height;
+          // waitKey();
+           num_of_lost = 0;
            return true;
         }
 
@@ -144,13 +162,9 @@ void TargetTracking::UpdateStablePoint()
 
 void TargetTracking::GetPredictPoint()
 {
-    int weight= 0.5 ;
+    int weight= 0.5 ;//预测的点所占的比重
     predict_pt_.x = weight*statePt_.x +(1-weight)*trackBox.center.x;
        predict_pt_.y = weight*statePt_.y +(1-weight)*trackBox.center.y;
-  //   if((float)new_target_area_/(float)origin_area_<0.4||(float)new_target_area_/(float)origin_area_>8)
-  //   {
-  //       predict_pt_ = stable_point_;
-   //  }
 }
 
 
@@ -218,6 +232,8 @@ int TargetTracking::tracking()
 
     for (;;)
     {
+
+        double t = (double)cvGetTickCount();//精确测量函数的执行时间
         if (!paused)
         {
             face_frame = cvRetrieveFrame(cap);
@@ -229,12 +245,12 @@ int TargetTracking::tracking()
         {
             if(!g_trackObject)
             {
-              CvRect faces = GetFaceRoi(face_frame);
+              CvRect faces = GetFaceRoi(face_frame,cvRect(0,0,640,480));
               if(faces.width>0)
             {
                   num_of_facedection++;
                   qDebug()<<"have a face"<<faces.x<<faces.y<<faces.height<<faces.width;
-                  if(num_of_facedection>10)
+                  if(num_of_facedection>5)
                   {
                         g_trackObject = -1;
                         g_selection = RectChange(faces,1);
@@ -262,7 +278,7 @@ int TargetTracking::tracking()
                 imshow("mask", mask);
                 int ch[] = { 0, 0 };
                 hue.create(hsv.size(), hsv.depth());
-                mixChannels(&hsv, 1, &hue, 1, ch, 1);
+                mixChannels(&hsv, 1, &hue, 1, ch, 1);           
                 //提取出h 分量
                 if (g_trackObject < 0)//计算选择目标的内的特征
                 {
@@ -278,7 +294,6 @@ int TargetTracking::tracking()
                     Mat buf(1, hsize, CV_8UC3);
                     for (int i = 0; i < hsize; i++)
                         buf.at<Vec3b>(i) = Vec3b(saturate_cast<uchar>(i*180. / hsize), 255, 255);
-                    //cvtColor(buf, buf, CV_HSV2BGR);//画出直方图
 
                     for (int i = 0; i < hsize; i++)
                     {
@@ -299,7 +314,6 @@ int TargetTracking::tracking()
                 TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));//camshift主函数，最后一个参数是迭代停止的标准
                 cout<<trackBox.center.x<<" "<<trackBox.center.y<<endl;
                 cout<<trackWindow.x<<" "<<trackWindow.y<<endl;
-                //oldPoint = trackBox.center;
                 /**********粒子滤波及其更新**********************/
                 measurement(0)=trackBox.center.x;
                 measurement(1)=trackBox.center.y;
@@ -318,13 +332,14 @@ int TargetTracking::tracking()
 
                 GetPredictPoint();
                 trackBox.center = predict_pt_;
+                set_target_rect(trackBox.boundingRect().x,trackBox.boundingRect().y,trackBox.boundingRect().width,trackBox.boundingRect().height);
                 if (trackWindow.area() <= 100)
                 {
                     int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
                    trackWindow = Rect(trackWindow.x - r, trackWindow.y - r,
                        trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);//赋值给下一次查找的
                 }
-                trackWindow = trackBox.boundingRect();
+                trackWindow = target_rect_;
 
                 circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
                 circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
@@ -334,17 +349,12 @@ int TargetTracking::tracking()
                  new_target_area_ = trackBox.size.area();
                // g_trackObject = target_miss_config();
                 old_target_area_ = new_target_area_;
-
-
-
-               // trackBox.center = predict_pt_;
-
                 new_point_ = trackBox.center;
                 UpdateStablePoint();
                 old_point_ = new_point_;
                 if(!(frame_num%10))
                 {
-               //   g_trackObject = face_config(face_frame);
+                   g_trackObject = face_config(face_frame,target_rect_);
                 }
 
                 if(g_trackObject == 0)
@@ -354,29 +364,26 @@ int TargetTracking::tracking()
 
 
                  ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
-                 rectangle(g_image,trackBox.boundingRect(),Scalar(255,0,0),2,8);
+                 rectangle(g_image,target_rect_,Scalar(255,0,0),2,8);
                  if(!(frame_num%10))
                  {
 
-                    Rect target = trackBox.boundingRect()&Rect(0,0,640,480);
+                    Rect target = target_rect_&Rect(0,0,640,480);
                     if(!flag_of_train)
-                    {
-                      // waitKey();
+                  {
                        face = ImageControl(frame,flag_of_new_target_,target);
                        flag_of_new_target_= false;
-                       LabelOfFace label= FaceRecognition(frame,target);
-                       if(label.label==1)
-                     {
-                       cout<<"you are my dear master"<<endl;
-                       emit GetFaceName();
-                       label.label = 0;
-
-                     }
+                       face_labe_= FaceRecognition(frame,target);
+                       if(face_labe_.label!=0)
+                       {
+                          emit GetFaceName();
+                       }
                     }
                     else
                     {
                         SaveImageForTrain(frame,target,num_of_template,flag_of_train);
                         flag_of_new_target_  = true;
+                        imshow("template",frame(target));
                     }
                  }
 
@@ -391,7 +398,8 @@ int TargetTracking::tracking()
             bitwise_not(roi, roi);//黑白反转
         }
 
-
+        t = (double)cvGetTickCount() - t; //计算检测到人脸所需时间
+        printf("face detection time = %gms\n", t / ((double)cvGetTickFrequency()*1000.));//打印到屏幕
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
 
@@ -458,4 +466,18 @@ void TargetTracking::TrainingModelOfFace()
 void TargetTracking::set_num_of_template(int num)
 {
     num_of_template = num;
+}
+
+void TargetTracking::AddFaceName(QString name)
+{
+    face_name_list_[num_of_template+1] = name;
+}
+
+QString TargetTracking::GetNameOfList()
+{
+    return face_name_list_[face_labe_.label];
+}
+void TargetTracking::set_target_rect(int x_,int y_,int width_,int height_)
+{
+    target_rect_ = Rect(x_,y_,width_,height_);
 }

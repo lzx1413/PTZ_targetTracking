@@ -60,14 +60,12 @@ void PTZCommand::PTZ_Init()
 
 
     //2.信号反馈设置
-    //writestring = "FF 30 30 00 94 31 EF";
     char command_data_2[7] = {0xFF, 0x30, 0x30, 0x00, 0x94, 0x31, 0xEF};
     this->my_serial_port->tx_data_.append(command_data_2, 7);
     this->my_serial_port->ChangeTxState(true);
     this->my_serial_port->msleep(20);
     waitKey(20);
     //3. 打开摄像头
-    //    writestring = "FF 30 30 00 A0 31 EF";
     char command_data_3[7 ] = {0xFF, 0x30, 0x30, 0x00, 0x94, 0x31, 0xEF};
     this->my_serial_port->tx_data_.append(command_data_3, 7);
     this->my_serial_port->ChangeTxState(true);
@@ -87,7 +85,7 @@ void PTZCommand::Home(void)
     this->my_serial_port->ChangeTxState(true);
 }
 
-void PTZCommand::AutoLeft(bool is_stop,int stop_time )
+void PTZCommand::AutoLeft(bool is_stop )
 {
     this->my_serial_port->msleep(5);
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00,0x53, 0x32, 0xEF };
@@ -133,7 +131,7 @@ void PTZCommand::AutoUp(bool is_stop ,int stop_time )
 }
 
 
-void PTZCommand::AutoDown(bool is_stop ,int stop_time )
+void PTZCommand::AutoDown(bool is_stop  )
 {
 
     char command_data[7] = { 0xFF, 0x30, 0x30, 0x00, 0x53, 0x34, 0xEF };
@@ -201,13 +199,13 @@ void PTZCommand::PosSet(double cpan_angle, double ctilt_angle)
     int i = 0;
 
     int pan_angle = static_cast<int>(cpan_angle / 0.1125 + 32768);
-    _itoa(pan_angle, ccpan_angle, 16);
+    _itoa_s(pan_angle, ccpan_angle, 16);
     for (i = 0; i<5; i++)
         if ((ccpan_angle[i] >= 'a') && (ccpan_angle[i] <= 'z'))
             ccpan_angle[i] -= 32;
 
     int tilt_angle = static_cast<int>(ctilt_angle / 0.1125 + 32768);
-    _itoa(tilt_angle, cctilt_angle, 16);
+    _itoa_s(tilt_angle, cctilt_angle, 16);
     for (i = 0; i<5; i++)
         if ((cctilt_angle[i] >= 'a') && (cctilt_angle[i] <= 'z'))
             cctilt_angle[i] -= 32;
@@ -322,7 +320,7 @@ void PTZCommand::FocusSet(double FocusNumber)
 
     char command_data[6];
     int Zoompos = static_cast<int>(FocusNumber);
-    _itoa(Zoompos, cZoomPos, 16);
+    _itoa_s(Zoompos, cZoomPos, 16);
     for (i = 0; i<5; i++)
         if ((cZoomPos[i] >= 'a') && (cZoomPos[i] <= 'z')) cZoomPos[i] -= 32;
 
@@ -346,7 +344,7 @@ void PTZCommand::PanSpeedSet(int PanSpeed)//8-800
     int i = 0;
 
     char command_data[7];
-    _itoa(PanSpeed, cPanSpeed, 16);
+    _itoa_s(PanSpeed, cPanSpeed, 16);
     for (i = 0; i<5; i++)
         if ((cPanSpeed[i] >= 'a') && (cPanSpeed[i] <= 'z'))
             cPanSpeed[i] = cPanSpeed[i]- 32;
@@ -642,7 +640,6 @@ double PTZCommand::GetPTZTiltAngle(void)
    return zoompos;
 }
 
- /*To return present focus position*/
 int PTZCommand::GetPTZFocusPos(void)
 {
     int is_response_length = 0;
@@ -697,7 +694,6 @@ int PTZCommand::GetPTZFocusPos(void)
     return focuspos;
 }
 
-//rotate the PTZ pointedangle based on current posion
 bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
 {
     char ccpan_angle[5] = { 0 };
@@ -715,12 +711,12 @@ bool PTZCommand::ReturnPTZ(const double cpan_angle, const double ctilt_angle)
     double set_ctilt_angle = curctilt_angle + ctilt_angle;
 
    int pan_angle = static_cast<int>(set_cpan_angle / 0.1125 + 32768);
-   _itoa(pan_angle, ccpan_angle, 16);
+   _itoa_s(pan_angle, ccpan_angle, 16);
     for (i = 0; i<5; i++)
        if ((ccpan_angle[i] >= 'a') && (ccpan_angle[i] <= 'z')) ccpan_angle[i] -= 32;
 
     int tilt_angle = static_cast<int>(set_ctilt_angle / 0.1125 + 32768);
-    _itoa(tilt_angle, cctilt_angle, 16);
+    _itoa_s(tilt_angle, cctilt_angle, 16);
     for (i = 0; i<5; i++)        if ((cctilt_angle[i] >= 'a') && (cctilt_angle[i] <= 'z')) cctilt_angle[i] -= 32;
 
     command_data[0] = 0xFF;
@@ -833,7 +829,7 @@ void PTZCommand::AutoTurn(int now_x,int now_y,int last_x,int last_y)
                     Stop();
                     waitKey(15);
                 }
-                AutoLeft(false,5);
+                AutoLeft(false);
             }
         }
 
@@ -849,7 +845,7 @@ void PTZCommand::AutoTurn(int now_x,int now_y,int last_x,int last_y)
                     Stop();
                     waitKey(15);
                 }
-                AutoDown(false,5);
+                AutoDown(false);
             }
 
     if(now_y<0)
@@ -886,7 +882,7 @@ void PTZCommand::AutoTurn(int now_x,int now_y,int last_x,int last_y)
                 Stop();
                 waitKey(15);
             }
-            AutoLeft(false,5);
+            AutoLeft(false);
         }
     }
 

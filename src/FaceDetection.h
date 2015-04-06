@@ -4,10 +4,10 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "cv.h"
 #include <stdio.h>
-#include <assert.h> //用于防御式编程
+#include <assert.h>
 using namespace cv;
 using namespace std;
 CvSeq *FaceDetect( IplImage *image);
-CvRect GetFaceRoi(  IplImage *img);
+CvRect GetFaceRoi(IplImage *img, CvRect rect);
 void CascadeInit();
 #endif // FACEDETECTION_H

@@ -18,7 +18,7 @@ void TrainingModle( int FaceNum )
     vector<int> labels;
     string cur_dir;
     char id[2];
-    int i, j;
+    int j;
 
     for (int i = 1; i <= FaceNum; i++)
     {
@@ -35,12 +35,15 @@ void TrainingModle( int FaceNum )
         }
         cout << "Processing samples in Class " << i << endl;
         vector<char*>file_vec = statdir.BeginBrowseFilenames("*.*");
-        for (j = 0; j < file_vec.size(); j++)
+        if(file_vec.size()>=0)
         {
+          for (j = 0; j < file_vec.size(); j++)
+            {
 
-            labels.push_back(i);
-            images.push_back(imread(file_vec[j], CV_LOAD_IMAGE_GRAYSCALE));
-        }
+               labels.push_back(i);
+               images.push_back(imread(file_vec[j], CV_LOAD_IMAGE_GRAYSCALE));
+            }
+         }
         cout << file_vec.size() << " images." << endl;
     }
     Ptr<FaceRecognizer> model = createLBPHFaceRecognizer();

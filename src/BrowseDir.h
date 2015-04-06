@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BROWSEDIR_H
+#define BROWSEDIR_H
 #include "direct.h"
 #include "string.h"
 #include "io.h"
@@ -23,3 +24,4 @@ protected:
 	virtual bool ProcessFile(const char *filename);
 	virtual void ProcessDir(const char *currentdir, const char *parentdir);
 };
+#endif//BROWSEDIR_H
