@@ -201,7 +201,9 @@ compiler_no_pch_compiler_clean:
 compiler_rcc_make_all: debug\qrc_resource.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) debug\qrc_resource.cpp
-debug\qrc_resource.cpp: ..\src\resource.qrc
+debug\qrc_resource.cpp: ..\src\resource.qrc \
+		..\src\bg3.jpg \
+		..\src\2.jpg
 	C:\Qt\Qt5.3.2\5.3\msvc2013_opengl\bin\rcc.exe -name resource ..\src\resource.qrc -o debug\qrc_resource.cpp
 
 compiler_moc_header_make_all: debug\moc_mainwindow.cpp debug\moc_targetTracking.cpp debug\moc_information_feedback_class.cpp debug\moc_my_serialport_class.cpp debug\moc_PTZ_command_class.cpp

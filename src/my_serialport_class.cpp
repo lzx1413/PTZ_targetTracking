@@ -19,6 +19,7 @@ void MySerialPort::run()
 
     while (!com_stopped_)
     {
+        try{
         if (com_stopped_&&com_opened_)
         {
             my_serialport->close();
@@ -108,6 +109,9 @@ void MySerialPort::run()
             my_serialport->close();
             com_opened_ = false;
         }
+    }
+        catch(...)
+        {}
     }
 }
 
