@@ -2,7 +2,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include "my_serialport_class.h"
-
+#include<windows.h>
 MySerialPort::MySerialPort()
 {
     com_stopped_ = false;
@@ -53,13 +53,12 @@ void MySerialPort::run()
             this->tx_event_ = false;
             my_serialport->clear(QSerialPort::AllDirections);//清理通道
             qDebug() << "Brush:" << "send data to "<<this->port_num_ << this->tx_data_.length();
-            information_.feedback_information_.clear();
-            information_.feedback_information_.append("send data to "+this->port_num_+"\n");
-            information_.InfoChanged();
+            information_.InfoDisplay("send data to "+this->port_num_+"\n");
 
             qDebug() << "arr size:" << this->tx_data_.length();
 
             my_serialport->write(this->tx_data_);//发送数据
+            Sleep(50);
             tx_data_.clear();
             if (my_serialport->waitForBytesWritten(50))
             {
@@ -67,9 +66,7 @@ void MySerialPort::run()
                 if (my_serialport->waitForReadyRead(1000))
                 {
                     qDebug()<<"have received data";
-
                     information_.InfoDisplay("have received data\n");
-
                     rx_event_ = true;
                     request_data_ = my_serialport->readAll();//获得回复数据
                     emit(this->ComRecive());//发出收到回复的信号
@@ -79,18 +76,15 @@ void MySerialPort::run()
                 else
                 {
                     qDebug() << "Brush:" << "wait return time out";
-                   information_.feedback_information_.clear();
-                   information_.feedback_information_.append("com wait return time out\n");
-                   information_.InfoChanged();
+                    information_.InfoDisplay("wait return time out\n");
                 }
-                   request_data_.clear();
+                  Sleep(50);
+                  request_data_.clear();
             }
             else
             {
                 qDebug() << "Brush:" << "send time out";
-                information_.feedback_information_.clear();
-                information_.feedback_information_.append("send time out\n");
-                information_.InfoChanged();
+               information_.InfoDisplay("send time out\n");
             }
         }
 
@@ -110,8 +104,10 @@ void MySerialPort::run()
             com_opened_ = false;
         }
     }
-        catch(...)
-        {}
+    catch(...)
+    {}
+
+
     }
 }
 
@@ -119,9 +115,7 @@ void MySerialPort::StopCom()
 {
     mutex.lock();
     com_stopped_ = true;
-    information_.feedback_information_.clear();
-    information_.feedback_information_.append("Stop the PTZ");
-    information_.InfoChanged();
+    information_.InfoDisplay("Stop the com");
     mutex.unlock();
 
 }
@@ -173,5 +167,4 @@ void MySerialPort::set_tx_data_(QByteArray a)
 QByteArray MySerialPort::get_request_data_()
 {
   return request_data_;
-
 }

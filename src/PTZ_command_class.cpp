@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <iostream>
+#include<windows.h>
 using namespace std;
 PTZCommand::PTZCommand()
 {
@@ -780,8 +781,6 @@ void PTZCommand::PTZcontrol(Point oldPoint, Point newPoint,int frame_num)
                 pan_speed = (abs(set_point_.x)*1.25*0.85);//*0.3*2*2);
             }
             PanSpeedSet(pan_speed);
-            // my_serial_port->msleep(5);
-            waitKey(15);
             if(abs(now_y_state_)<50)
             {
                 tilt_speed = (abs(set_point_.y)*1.2*2*0.85*0.85);//*0.8*0.5*2);
@@ -791,10 +790,8 @@ void PTZCommand::PTZcontrol(Point oldPoint, Point newPoint,int frame_num)
                 tilt_speed = (abs(set_point_.y)*0.6*2*0.85*0.85);//*0.8*0.2*2);
             }
 
-            TiltSpeedSet( tilt_speed);                                                     //Not modified?
-            waitKey(15);
-
-
+            TiltSpeedSet( tilt_speed);
+            Sleep(50);
     AutoTurn(now_x_state_,now_y_state_,last_x_state_,last_y_state_);
 
     last_x_state_2=last_x_state_;

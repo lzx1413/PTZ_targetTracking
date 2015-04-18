@@ -4,6 +4,7 @@
 #include"my_serialport_class.h"
 #include<QByteArray>
 #include <opencv2/opencv.hpp>
+#include<QWaitCondition>
 using namespace cv;
 //具体还得参考协议做出修改
 class PTZCommand:public QObject

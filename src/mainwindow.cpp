@@ -79,6 +79,7 @@ connect(this->timer_,&QTimer::timeout,this,&MainWindow::ReadFrame);
 connect(ui_->startvideo, &QPushButton::clicked, this, &MainWindow::OpenCamera);
 connect(ui_->closevideo, &QPushButton::clicked, this, &MainWindow::CloseCamera);
 /************************训练******************************/
+ui_->template_num_->setValue(2);
 connect(ui_->flag_of_training,&QPushButton::clicked,target_,&TargetTracking::set_flag_of_train);
 connect(ui_->name_of_face_,&QLineEdit::textChanged,this->target_,&TargetTracking::AddFaceName);
 connect(ui_->training,&QPushButton::clicked,this->target_,&TargetTracking::TrainingModelOfFace);
@@ -225,5 +226,6 @@ void MainWindow::ShowFaceName()
     ui_->photo1->setPixmap(QPixmap::fromImage(face2show_));
     ui_->photo1->resize(ui_->photo1->pixmap()->size());
     ui_->name1->setText(target_->GetNameOfList());
+
 
 }

@@ -131,14 +131,8 @@ bool TargetTracking::face_config(IplImage *frame,Rect rect)
 
        else
        {
-          // target_rect_.x = faces.x;
-          // target_rect_.y= faces.y;
-          // target_rect_.width = faces.width;
-          // target_rect_.height = faces.height;
-          // stable_point_ =  Point(faces.x+0.5*faces.width,faces.y+0.5*faces.height);
            qDebug()<<target_rect_.x<<target_rect_.y<<target_rect_.width<<target_rect_.height;
            qDebug()<<faces.x<<faces.y<<faces.width<<faces.height;
-          // waitKey();
            num_of_lost = 0;
            return true;
         }
@@ -377,6 +371,8 @@ int TargetTracking::tracking()
                        if(face_labe_.label!=0)
                        {
                           emit GetFaceName();
+                           QString result_text = face_name_list_[face_labe_.label];
+                           putText(g_image,result_text.toStdString(),  Point(target.x,target.y),FONT_HERSHEY_PLAIN, 4.0, CV_RGB(0,255,0), 2.0);
                        }
                     }
                     else
@@ -398,8 +394,11 @@ int TargetTracking::tracking()
             bitwise_not(roi, roi);//黑白反转
         }
 
-        t = (double)cvGetTickCount() - t; //计算检测到人脸所需时间
-        printf("face detection time = %gms\n", t / ((double)cvGetTickFrequency()*1000.));//打印到屏幕
+        t = ((double)cvGetTickCount() - t)/10000; //计算检测到人脸所需时间
+        char a[1];
+        _itoa(t,a,10);
+        string time =a;
+        putText(g_image,time,Point(0,20),FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0), 2.0);
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
 
@@ -456,6 +455,7 @@ Mat TargetTracking::ReturnNoramlizedImage()
 void TargetTracking::set_flag_of_train()
 {
     flag_of_train = !flag_of_train;
+    if(flag_of_train)
     num_of_template++;
 }
 
@@ -470,7 +470,7 @@ void TargetTracking::set_num_of_template(int num)
 
 void TargetTracking::AddFaceName(QString name)
 {
-    face_name_list_[num_of_template+1] = name;
+    face_name_list_[num_of_template] = name;
 }
 
 QString TargetTracking::GetNameOfList()

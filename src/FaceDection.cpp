@@ -26,7 +26,7 @@ CvSeq* FaceDetect(IplImage *img) //检测和画出人脸的函数体
     cvClearMemStorage(storage);
     if (cascade)
     {
-        CvSeq *faces = cvHaarDetectObjects(small_img, cascade, storage, 1.1, 2, 0, cvSize(30, 30));
+        CvSeq *faces = cvHaarDetectObjects(small_img, cascade, storage, 1.1, 3, 0, cvSize(30, 30));
         cvReleaseImage(&small_img);
         cvReleaseImage(&gray);
         return faces;
