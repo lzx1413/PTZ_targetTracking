@@ -7,7 +7,7 @@
 #include <assert.h>
 using namespace cv;
 using namespace std;
-CvSeq *FaceDetect( IplImage *image);
-CvRect GetFaceRoi(IplImage *img, CvRect rect);
+CvSeq *FaceDetect(IplImage *img);
+Rect GetFaceRoi(Mat &src, Rect rect1);
 void CascadeInit();
 #endif // FACEDETECTION_H

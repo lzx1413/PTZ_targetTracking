@@ -40,7 +40,8 @@ HEADERS  += mainwindow.h \
     ImageController.h \
     FaceRecognition.h \
     BrowseDir.h \
-    StatDir.h
+    StatDir.h \
+    WatershedSegment.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include

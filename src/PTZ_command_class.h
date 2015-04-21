@@ -21,7 +21,7 @@ public:
     void Home(void);  //返回home(0,0)处
     void AutoTurn(int now_x,int now_y,int last_x,int last_y);
     void AutoLeft(bool is_stop = true);  //自动追踪时开始向左转
-    void AutoRight(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向右转
+    void AutoRight(bool is_stop = true);  //自动追踪时开始向右转
     void AutoUp(bool is_stop = true,int stop_time = 100);  //自动追踪时开始向上转
     void AutoDown(bool is_stop = true);  //自动追踪时开始向下转
     void ManuLeft();  //手动追踪时开始向左转
@@ -63,6 +63,7 @@ private:
     int now_y_state_;  //这一次y运动方向
     int last_x_state_2;//两次前的运动方向
     int last_y_state_2;
+    bool flag_of_motion = true;
 	
 };
 

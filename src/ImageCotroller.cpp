@@ -1,5 +1,7 @@
 #include"ImageController.h"
 #include<opencv2/opencv.hpp>
+#include"information_feedback_class.h"
+static InformationFeedback information_feedback;
 const int DST_IMG_WIDTH =  112;
 const int DST_IMG_HEIGH= 92;
 static QDir* file_ ;
@@ -31,11 +33,10 @@ void CreateMainDir()
    QString current_dir= date.toString("hh:mm:ss");
    current_dir.replace(":","_");
     if(!  file_->mkdir( current_dir))
-        qDebug()<<"can not make new dir";
+    information_feedback.InfoDisplay("can not make new dir of the images\n");
     file_->cd(current_dir);
     current_path_.clear();
     current_path_ = file_->path();
-    qDebug()<<file_->path();
 
 }
 
@@ -44,7 +45,7 @@ void CreateMainDir()
     QString current_dir = QString::number(num_of_dir_);
      file_->mkdir(current_dir);
    if(!  file_->cd(current_dir))
-       qDebug()<<"can not make new dir";
+     information_feedback.InfoDisplay("can not make new dir of the images\n");
      current_path_.clear();
      current_path_ = file_->path();
      qDebug()<<file_->path();

@@ -38,7 +38,7 @@ signals:
 
 private:
     void DrawCross( Point center, Scalar color,int d );  //画粒子
-    bool face_config(IplImage * frame, Rect rect);
+    bool face_config(Mat &frame, Rect rect);
     void PTZReposition();
     void GetPredictPoint();
     int  iAbsolute(int a, int b);  //作差求绝对值
@@ -64,11 +64,24 @@ private:
     QMap<int,QString> face_name_list_;
     LabelOfFace face_labe_;
     Rect target_rect_;
+    Mat binary;
+    Mat rawframe;
+    Rect target;
+    void ImageWatersheds(Rect rec);
 };
 
 inline int get_point_distace(Point A,Point B)
 {
     return sqrt((A.x-B.x)^2+(A.y-B.y)^2);
 }
+inline Mat opening(const Mat src)//开运算使轮廓平滑完整
+    {
+        Mat dst;
+        int morph_elem = 2;
+        int morph_size = 2;
+        Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+        morphologyEx( src, dst, MORPH_OPEN , element );
+        return dst;
+    };
 
 #endif // TARGETRACKING_H

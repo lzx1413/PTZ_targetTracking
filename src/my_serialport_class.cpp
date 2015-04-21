@@ -58,7 +58,7 @@ void MySerialPort::run()
             qDebug() << "arr size:" << this->tx_data_.length();
 
             my_serialport->write(this->tx_data_);//·¢ËÍÊý¾Ý
-            Sleep(50);
+           // this->msleep(50);
             tx_data_.clear();
             if (my_serialport->waitForBytesWritten(50))
             {
@@ -78,7 +78,7 @@ void MySerialPort::run()
                     qDebug() << "Brush:" << "wait return time out";
                     information_.InfoDisplay("wait return time out\n");
                 }
-                  Sleep(50);
+                  //Sleep(50);
                   request_data_.clear();
             }
             else

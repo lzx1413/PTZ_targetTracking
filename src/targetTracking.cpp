@@ -1,6 +1,7 @@
 #include "targetTracking.h"
 #include  "FaceDetection.h"
 #include"ImageController.h"
+#include"WatershedSegment.h"
 static Rect g_selection;
 static bool g_selectObject = false;
 static Point g_origin;
@@ -41,9 +42,9 @@ static void onMouse(int event, int x, int y, int, void*)  //用于鼠标选取�
 
 
 //区域的缩放
-inline static CvRect RectChange(CvRect &rec ,float scale)
+inline static Rect RectChange(Rect &rec ,float scale)
 {
-    CvRect tem ;
+    Rect tem ;
     tem.x  = static_cast<int>(rec.x-rec.width*(scale-1)/2);
     tem.y  = static_cast<int>(rec.y-rec.height*(scale-1)/2);
     tem.width = static_cast<int>(rec.width*scale);
@@ -115,20 +116,18 @@ bool TargetTracking::target_miss_config()
 }
 
 //判断当前目标是否包含脸
-bool TargetTracking::face_config(IplImage *frame,Rect rect)
+bool TargetTracking::face_config(Mat& frame,Rect rect)
 {
-       CvRect rect_ = cvRect(rect.x,rect.y,rect.width,rect.height);
-       CvRect face_rect = RectChange(rect_,1.3);
-       CvRect faces = GetFaceRoi(frame,face_rect);
-       if(faces.height == 0)
-            num_of_lost++;
-       if(num_of_lost>5)
+       Rect face_rect = RectChange(rect,1.3);
+       Rect faces = GetFaceRoi(frame,face_rect);
+       if(num_of_lost>10)
        {
            num_of_lost=0;
            return false;
 
        }
-
+       else if(faces.height == 0)
+            num_of_lost++;
        else
        {
            qDebug()<<target_rect_.x<<target_rect_.y<<target_rect_.width<<target_rect_.height;
@@ -167,10 +166,9 @@ int TargetTracking::tracking()
 
     qDebug()<<num_of_template<<"ge subdir";
     waitKey();
-    CvCapture *cap = 0;
-    cap = cvCaptureFromCAM(1);
+    VideoCapture cap(1);
 
-    if (!cap)
+    if (!cap.isOpened())
     {
         cout << "***Could not initialize capturing...***\n";
         cout << "Current parameter's value: \n";
@@ -230,16 +228,16 @@ int TargetTracking::tracking()
         double t = (double)cvGetTickCount();//精确测量函数的执行时间
         if (!paused)
         {
-            face_frame = cvRetrieveFrame(cap);
-            if (!face_frame)
-                break;
+            cap>>frame;
         }
 
         if (!paused)
         {
             if(!g_trackObject)
             {
-              CvRect faces = GetFaceRoi(face_frame,cvRect(0,0,640,480));
+              Mat gray;
+              cvtColor(frame,gray,CV_BGR2GRAY);
+              Rect faces = GetFaceRoi(gray,Rect(0,0,640,480));
               if(faces.width>0)
             {
                   num_of_facedection++;
@@ -258,7 +256,7 @@ int TargetTracking::tracking()
 
               }
             }
-            frame = face_frame;
+            rawframe = frame;
             GaussianBlur(frame,g_image,Size(1,1),0,0);
             cvtColor(g_image, hsv, COLOR_BGR2HSV);//转换到hsv空间
 
@@ -267,7 +265,8 @@ int TargetTracking::tracking()
                 frame_num++;
                 int _vmin = vmin_, _vmax = vmax_;
 
-                inRange(hsv, Scalar(0, smin_, MIN(_vmin, _vmax)),
+                inRange(hsv, Scalar(0
+                                    , smin_, MIN(_vmin, _vmax)),
                     Scalar(180, 256, MAX(_vmin, _vmax)), mask);
                 imshow("mask", mask);
                 int ch[] = { 0, 0 };
@@ -304,8 +303,7 @@ int TargetTracking::tracking()
 
                 calcBackProject(&hue, 1, 0, hist, backproj, &phranges);//计算反向投影图
                 backproj &= mask;
-                trackBox = CamShift(backproj, trackWindow,
-                TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));//camshift主函数，最后一个参数是迭代停止的标准
+                trackBox = CamShift(backproj, trackWindow, TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 10, 1));//camshift主函数，最后一个参数是迭代停止的标准
                 cout<<trackBox.center.x<<" "<<trackBox.center.y<<endl;
                 cout<<trackWindow.x<<" "<<trackWindow.y<<endl;
                 /**********粒子滤波及其更新**********************/
@@ -347,9 +345,9 @@ int TargetTracking::tracking()
                 UpdateStablePoint();
                 old_point_ = new_point_;
                 if(!(frame_num%10))
-                {
-                   g_trackObject = face_config(face_frame,target_rect_);
-                }
+               {
+            //       g_trackObject = face_config(face_frame,target_rect_);
+               }
 
                 if(g_trackObject == 0)
                 {
@@ -359,10 +357,9 @@ int TargetTracking::tracking()
 
                  ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
                  rectangle(g_image,target_rect_,Scalar(255,0,0),2,8);
+                 target = target_rect_&Rect(0,0,640,480);
                  if(!(frame_num%10))
                  {
-
-                    Rect target = target_rect_&Rect(0,0,640,480);
                     if(!flag_of_train)
                   {
                        face = ImageControl(frame,flag_of_new_target_,target);
@@ -380,9 +377,10 @@ int TargetTracking::tracking()
                         SaveImageForTrain(frame,target,num_of_template,flag_of_train);
                         flag_of_new_target_  = true;
                         imshow("template",frame(target));
+
                     }
                  }
-
+                 ImageWatersheds(target);
                  ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
         }
         else if (g_trackObject < 0)
@@ -480,4 +478,30 @@ QString TargetTracking::GetNameOfList()
 void TargetTracking::set_target_rect(int x_,int y_,int width_,int height_)
 {
     target_rect_ = Rect(x_,y_,width_,height_);
+}
+
+void TargetTracking::ImageWatersheds(Rect rec)
+
+{
+    Mat image,mask1,mask2,mask;
+     rawframe(rec).copyTo(image);
+     cvtColor(image,binary,COLOR_BGR2HSV);
+     inRange(binary, Scalar(156,30,0), Scalar(180,170,256*0.9), mask1);
+     inRange(binary, Scalar(0,40,20), Scalar(80,180,255), mask2);
+     bitwise_or(mask1,mask2,binary);
+     binary = opening(binary);
+    imshow("binary",binary);
+    Mat fImage;
+    erode(binary,fImage,cv::Mat(),cv::Point(-1,-1),6); //binary = 255 - binary; //让前景变为白色区域//腐蚀去掉小的干扰物体得到前景图像
+
+   Mat bImage;
+   dilate(binary,bImage,cv::Mat(),cv::Point(-1,-1),6);
+   threshold(bImage,bImage,1,128,cv::THRESH_BINARY_INV);//对原始二值图像阈值化并取反，得到背景图像
+   Mat marker(binary.size(),CV_8U,cv::Scalar(0));
+   marker = fImage + bImage;  //创建标记图像
+   WatershedSegment segmenter;
+   segmenter.setMarkers(marker);
+   Mat segment = segmenter.process(image);
+   namedWindow("segmenter",CV_WINDOW_AUTOSIZE);
+   imshow("segmenter",segment);
 }
