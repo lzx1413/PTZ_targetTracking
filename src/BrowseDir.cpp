@@ -47,7 +47,7 @@ bool CBrowseDir::BrowseDir(const char *dir, const char *filespec)
 	long hFile;
 	_finddata_t fileinfo;
 	if ((hFile = _findfirst(filespec, &fileinfo)) != -1)
-	{
+    {
 		do
 		{
 			if (!(fileinfo.attrib & _A_SUBDIR))

@@ -41,7 +41,7 @@ HEADERS  += mainwindow.h \
     FaceRecognition.h \
     BrowseDir.h \
     StatDir.h \
-    WatershedSegment.h
+    watershed_segment_class.h
 
 FORMS    += mainwindow.ui
 INCLUDEPATH += D:/opencv/build/include
@@ -49,7 +49,7 @@ INCLUDEPATH += D:/opencv/build/include/opencv
 INCLUDEPATH += D:/opencv/build/include/opencv2
 
 win32:CONFIG(debug, debug|release): {
-LIBS += -LD:/opencV/build/x86/vc11/lib \
+LIBS += -LD:/opencV/build/x86/vc12/lib \
 -lopencv_core249d \
 -lopencv_imgproc249d \
 -lopencv_highgui249d \
@@ -61,8 +61,9 @@ LIBS += -LD:/opencV/build/x86/vc11/lib \
 -lopencv_contrib249d \
 -lopencv_legacy249d \
 -lopencv_flann249d\
+-lopencv_nonfree249d\
 } else:win32:CONFIG(release, debug|release): {
-LIBS += -LD:/opencv/build/x86/vc11/lib \
+LIBS += -LD:/opencv/build/x86/vc12/lib \
 -lopencv_core249 \
 -lopencv_imgproc249 \
 -lopencv_highgui249 \
@@ -73,9 +74,12 @@ LIBS += -LD:/opencv/build/x86/vc11/lib \
 -lopencv_objdetect249 \
 -lopencv_contrib249 \
 -lopencv_legacy249 \
--lopencv_flann249
+-lopencv_flann249\
+-lopencv_nonfree249\
 }
 
 RESOURCES += \
     resource.qrc
+
+OTHER_FILES +=
 

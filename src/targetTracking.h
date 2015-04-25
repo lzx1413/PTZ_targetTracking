@@ -9,7 +9,11 @@
 #include <opencv2/legacy/legacy.hpp>
 #include"PTZ_command_class.h"
 #include<qmap.h>
+#include<opencv2/core/core.hpp>
 #include"FaceRecognition.h"
+#include <opencv2/nonfree/features2d.hpp>
+#include"watershed_segment_class.h"
+#include <opencv2/imgproc/imgproc.hpp>
 using namespace cv;
 using namespace std;
 
@@ -67,7 +71,25 @@ private:
     Mat binary;
     Mat rawframe;
     Rect target;
+    Vector<Point> contour_of_target;
+    vector<Vector<Point>> contour_of_image;
     void ImageWatersheds(Rect rec);
+    Mat segment;
+    WatershedSegment segmenter;
+    int minHessian = 600;
+    SurfFeatureDetector dector;
+    vector<KeyPoint> keypoints_objects,keypoints_scene;
+    SurfDescriptorExtractor extractor;
+    FlannBasedMatcher matcher;
+    vector<DMatch> matches;
+    double max_dist=0;
+    double min_dist=100;
+    vector<DMatch> good_matches;
+    vector<Point2f> scene;
+    void CalculateKeyPoint(Mat &img,bool flag);
+    Mat descriptors_object,descriptors_scene;
+    void GetTargetWithPoints();
+
 };
 
 inline int get_point_distace(Point A,Point B)

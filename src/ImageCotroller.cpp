@@ -25,6 +25,7 @@ void ImageControllerInit(QString main_path)
        CreateSubdir();
        path_of_image = file_->path();
        face = Mat::zeros(DST_IMG_WIDTH,DST_IMG_HEIGH,CV_8UC3);
+
 }
 
 void CreateMainDir()

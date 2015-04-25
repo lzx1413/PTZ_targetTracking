@@ -1,7 +1,7 @@
 #include "targetTracking.h"
 #include  "FaceDetection.h"
 #include"ImageController.h"
-#include"WatershedSegment.h"
+#include"windows.h"
 static Rect g_selection;
 static bool g_selectObject = false;
 static Point g_origin;
@@ -203,6 +203,8 @@ int TargetTracking::tracking()
 
     namedWindow("Histogram", 0);
     namedWindow("TargetTracking", 0);
+    namedWindow("segmenter",CV_WINDOW_AUTOSIZE);
+    namedWindow("binary",0);
     setMouseCallback("TargetTracking", onMouse, 0);
 
 
@@ -261,7 +263,7 @@ int TargetTracking::tracking()
             cvtColor(g_image, hsv, COLOR_BGR2HSV);//转换到hsv空间
 
             if (g_trackObject)//已经选择好跟踪对象
-            {
+           {
                 frame_num++;
                 int _vmin = vmin_, _vmax = vmax_;
 
@@ -299,6 +301,7 @@ int TargetTracking::tracking()
                     old_target_area_ = g_selection.area();
                     origin_area_ = g_selection.area();
                     stable_point_ =Point( g_selection.x+g_selection.width/2,g_selection.y+g_selection.height/2);
+                    CalculateKeyPoint(rawframe(g_selection),true);
                 }
 
                 calcBackProject(&hue, 1, 0, hist, backproj, &phranges);//计算反向投影图
@@ -331,11 +334,9 @@ int TargetTracking::tracking()
                    trackWindow = Rect(trackWindow.x - r, trackWindow.y - r,
                        trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);//赋值给下一次查找的
                 }
-                trackWindow = target_rect_;
-
-                circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
-                circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
-                circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
+                 target = target_rect_&Rect(0,0,640,480);
+                CalculateKeyPoint(rawframe(target),false);
+                GetTargetWithPoints();
                 if (backproj_mode_)
                 cvtColor(backproj, g_image, COLOR_GRAY2BGR);
                  new_target_area_ = trackBox.size.area();
@@ -346,7 +347,7 @@ int TargetTracking::tracking()
                 old_point_ = new_point_;
                 if(!(frame_num%10))
                {
-            //       g_trackObject = face_config(face_frame,target_rect_);
+                   g_trackObject = face_config(frame,target_rect_);
                }
 
                 if(g_trackObject == 0)
@@ -355,10 +356,7 @@ int TargetTracking::tracking()
                 }
 
 
-                 ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
-                 rectangle(g_image,target_rect_,Scalar(255,0,0),2,8);
-                 target = target_rect_&Rect(0,0,640,480);
-                 if(!(frame_num%10))
+                          if(!(frame_num%10))
                  {
                     if(!flag_of_train)
                   {
@@ -382,6 +380,7 @@ int TargetTracking::tracking()
                  }
                  ImageWatersheds(target);
                  ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
+                 trackWindow = target;
         }
         else if (g_trackObject < 0)
             paused = false;
@@ -397,6 +396,12 @@ int TargetTracking::tracking()
         _itoa(t,a,10);
         string time =a;
         putText(g_image,time,Point(0,20),FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0), 2.0);
+        ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
+        rectangle(g_image,target,Scalar(255,0,0),2,8);
+        circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
+        circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
+        circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
+
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
 
@@ -435,10 +440,8 @@ int TargetTracking::tracking()
 
 
 }
-  destroyWindow("TargetTracking");
-  destroyWindow("mask");
-  destroyWindow("Histogram");
   g_selectObject = false;
+  destroyAllWindows();
   g_trackObject = 0 ;
 return 0;
 }
@@ -484,24 +487,80 @@ void TargetTracking::ImageWatersheds(Rect rec)
 
 {
     Mat image,mask1,mask2,mask;
-     rawframe(rec).copyTo(image);
-     cvtColor(image,binary,COLOR_BGR2HSV);
-     inRange(binary, Scalar(156,30,0), Scalar(180,170,256*0.9), mask1);
-     inRange(binary, Scalar(0,40,20), Scalar(80,180,255), mask2);
-     bitwise_or(mask1,mask2,binary);
-     binary = opening(binary);
+    rawframe(rec).copyTo(image);
+    cvtColor(image,binary,COLOR_BGR2HSV);
+    inRange(binary, Scalar(156,30,0), Scalar(180,170,256*0.9), mask1);
+    inRange(binary, Scalar(0,40,20), Scalar(80,180,255), mask2);
+    bitwise_or(mask1,mask2,binary);
+    binary = opening(binary);
     imshow("binary",binary);
     Mat fImage;
-    erode(binary,fImage,cv::Mat(),cv::Point(-1,-1),6); //binary = 255 - binary; //让前景变为白色区域//腐蚀去掉小的干扰物体得到前景图像
+    Mat bImage;
+    dilate(binary,bImage,cv::Mat(),cv::Point(-1,-1),6);
+    Mat marker(binary.size(),CV_8U,cv::Scalar(0));
+    marker = fImage + bImage;  //创建标记图像
+    segmenter.setMarkers(marker);
+    segment = segmenter.process(image);
+    imshow("segmenter",segment);
+}
 
-   Mat bImage;
-   dilate(binary,bImage,cv::Mat(),cv::Point(-1,-1),6);
-   threshold(bImage,bImage,1,128,cv::THRESH_BINARY_INV);//对原始二值图像阈值化并取反，得到背景图像
-   Mat marker(binary.size(),CV_8U,cv::Scalar(0));
-   marker = fImage + bImage;  //创建标记图像
-   WatershedSegment segmenter;
-   segmenter.setMarkers(marker);
-   Mat segment = segmenter.process(image);
-   namedWindow("segmenter",CV_WINDOW_AUTOSIZE);
-   imshow("segmenter",segment);
+void TargetTracking::CalculateKeyPoint(Mat &img,bool flag)
+{
+    Mat gray_image;
+    cvtColor(img,gray_image,CV_RGB2GRAY);
+    if(flag)
+    {
+        keypoints_objects.clear();
+       dector.detect(gray_image,keypoints_objects);
+        extractor.compute(gray_image,keypoints_objects,descriptors_object);
+    }
+
+    else
+       {
+        keypoints_scene.clear();
+               dector.detect(gray_image,keypoints_scene);
+       extractor.compute(gray_image,keypoints_objects,descriptors_scene);
+
+       }
+
+}
+void  TargetTracking::GetTargetWithPoints()
+{
+      matcher.match(descriptors_object,descriptors_scene,matches);
+        for (int i = 0; i < descriptors_object.rows; i++)
+    {
+        double dist = matches[i].distance;
+        if (dist < min_dist) min_dist = dist;
+        if (dist > max_dist) max_dist = dist;
+    }
+     for (int i = 0; i < descriptors_object.rows; i++)
+    {
+        if (matches[i].distance < 3 * min_dist)
+        {
+            good_matches.push_back(matches[i]);
+        }
+    }
+     scene.clear();
+     Point temp=keypoints_scene[good_matches[0].trainIdx].pt;
+  int x_min=temp.x,x_max=temp.x;
+  int y_min=temp.y,y_max=temp.y;
+  for( int i = 0; i < good_matches.size(); i++ )
+  {
+         scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+        if(scene[i].x<x_min)
+            x_min = scene[i].x;
+        if(scene[i].x>x_max)
+            x_max = scene[i].x;
+        if(scene[i].y<y_min)
+            y_min = scene[i].y;
+        if(scene[i].y>y_max)
+            y_max = scene[i].y;
+  }
+  Rect rec(Point(x_min+target.x,y_min+target.y),Point(x_max+target.x,y_max+target.y));
+  trackBox.center = Point((rec.x+rec.width)/2,(rec.y+rec.height)/2);
+  trackBox.size.width = rec.width;
+  trackBox.size.height = rec.height;
+  target  =rec;
+
+
 }
