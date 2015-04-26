@@ -76,19 +76,12 @@ private:
     void ImageWatersheds(Rect rec);
     Mat segment;
     WatershedSegment segmenter;
-    int minHessian = 600;
-    SurfFeatureDetector dector;
-    vector<KeyPoint> keypoints_objects,keypoints_scene;
-    SurfDescriptorExtractor extractor;
-    FlannBasedMatcher matcher;
-    vector<DMatch> matches;
-    double max_dist=0;
+    int minHessian = 4000;
+      double max_dist=0;
     double min_dist=100;
-    vector<DMatch> good_matches;
-    vector<Point2f> scene;
     void CalculateKeyPoint(Mat &img,bool flag);
     Mat descriptors_object,descriptors_scene;
-    void GetTargetWithPoints();
+    void GetTargetWithPoints(Mat &img);
 
 };
 

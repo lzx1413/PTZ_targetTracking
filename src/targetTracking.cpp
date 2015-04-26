@@ -8,6 +8,14 @@ static Point g_origin;
 static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
 static int num_of_lost = 0;
+vector<KeyPoint> keypoints_object;
+  SurfFeatureDetector dector;
+    SurfDescriptorExtractor extractor;
+    FlannBasedMatcher matcher;
+
+
+
+
 void TargetTracking::TestFunction()
 {
     qDebug()<<face_name_list_.values();
@@ -166,7 +174,7 @@ int TargetTracking::tracking()
 
     qDebug()<<num_of_template<<"ge subdir";
     waitKey();
-    VideoCapture cap(1);
+    VideoCapture cap(0);
 
     if (!cap.isOpened())
     {
@@ -201,10 +209,10 @@ int TargetTracking::tracking()
     condens->DynamMatr[2] = 0.0;
     condens->DynamMatr[3] = 1.0;
 
-    namedWindow("Histogram", 0);
+   namedWindow("Histogram", 0);
     namedWindow("TargetTracking", 0);
-    namedWindow("segmenter",CV_WINDOW_AUTOSIZE);
-    namedWindow("binary",0);
+    //namedWindow("segmenter",CV_WINDOW_AUTOSIZE);
+   // namedWindow("binary",0);
     setMouseCallback("TargetTracking", onMouse, 0);
 
 
@@ -301,7 +309,7 @@ int TargetTracking::tracking()
                     old_target_area_ = g_selection.area();
                     origin_area_ = g_selection.area();
                     stable_point_ =Point( g_selection.x+g_selection.width/2,g_selection.y+g_selection.height/2);
-                    CalculateKeyPoint(rawframe(g_selection),true);
+                     CalculateKeyPoint(rawframe(g_selection),true);
                 }
 
                 calcBackProject(&hue, 1, 0, hist, backproj, &phranges);//计算反向投影图
@@ -335,8 +343,12 @@ int TargetTracking::tracking()
                        trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);//赋值给下一次查找的
                 }
                  target = target_rect_&Rect(0,0,640,480);
-                CalculateKeyPoint(rawframe(target),false);
-                GetTargetWithPoints();
+                 circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
+                 circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
+                 circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
+
+
+               GetTargetWithPoints(rawframe(target));
                 if (backproj_mode_)
                 cvtColor(backproj, g_image, COLOR_GRAY2BGR);
                  new_target_area_ = trackBox.size.area();
@@ -345,9 +357,12 @@ int TargetTracking::tracking()
                 new_point_ = trackBox.center;
                 UpdateStablePoint();
                 old_point_ = new_point_;
+                ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
+                rectangle(g_image,target,Scalar(255,0,0),2,8);
+
                 if(!(frame_num%10))
                {
-                   g_trackObject = face_config(frame,target_rect_);
+                 //  g_trackObject = face_config(frame,target_rect_);
                }
 
                 if(g_trackObject == 0)
@@ -378,7 +393,7 @@ int TargetTracking::tracking()
 
                     }
                  }
-                 ImageWatersheds(target);
+                // ImageWatersheds(target);
                  ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
                  trackWindow = target;
         }
@@ -396,12 +411,6 @@ int TargetTracking::tracking()
         _itoa(t,a,10);
         string time =a;
         putText(g_image,time,Point(0,20),FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0), 2.0);
-        ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
-        rectangle(g_image,target,Scalar(255,0,0),2,8);
-        circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
-        circle( g_image,trackBox.center,5,CV_RGB(0,255,0),3);
-        circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
-
         imshow("TargetTracking", g_image);
         imshow("Histogram", histimg);
 
@@ -493,7 +502,7 @@ void TargetTracking::ImageWatersheds(Rect rec)
     inRange(binary, Scalar(0,40,20), Scalar(80,180,255), mask2);
     bitwise_or(mask1,mask2,binary);
     binary = opening(binary);
-    imshow("binary",binary);
+  //  imshow("binary",binary);
     Mat fImage;
     Mat bImage;
     dilate(binary,bImage,cv::Mat(),cv::Point(-1,-1),6);
@@ -501,66 +510,83 @@ void TargetTracking::ImageWatersheds(Rect rec)
     marker = fImage + bImage;  //创建标记图像
     segmenter.setMarkers(marker);
     segment = segmenter.process(image);
-    imshow("segmenter",segment);
+  //  imshow("segmenter",segment);
 }
 
 void TargetTracking::CalculateKeyPoint(Mat &img,bool flag)
 {
     Mat gray_image;
-    cvtColor(img,gray_image,CV_RGB2GRAY);
+    Mat image;
+    resize(img,image,Size(92,112),0,0,CV_INTER_LINEAR);
+    cvtColor(image,gray_image,CV_RGB2GRAY);
     if(flag)
     {
-        keypoints_objects.clear();
-       dector.detect(gray_image,keypoints_objects);
-        extractor.compute(gray_image,keypoints_objects,descriptors_object);
+        dector.detect(gray_image,keypoints_object);
+        extractor.compute(gray_image,keypoints_object,descriptors_object);
     }
 
-    else
-       {
-        keypoints_scene.clear();
-               dector.detect(gray_image,keypoints_scene);
-       extractor.compute(gray_image,keypoints_objects,descriptors_scene);
-
-       }
-
-}
-void  TargetTracking::GetTargetWithPoints()
+ }
+void  TargetTracking::GetTargetWithPoints(Mat &img)
 {
-      matcher.match(descriptors_object,descriptors_scene,matches);
-        for (int i = 0; i < descriptors_object.rows; i++)
+    float width_raw = img.cols/92.0f;
+    float height_raw = img.rows/112.0f;
+    vector<KeyPoint> keypoints_scene;
+    Mat image ;
+    resize(img,image,Size(92,112),0,0,CV_INTER_LINEAR);
+    Mat gray_image;
+    cvtColor(image,gray_image,CV_RGB2GRAY);
+    dector.detect(gray_image,keypoints_scene);
+    extractor.compute(gray_image,keypoints_scene,descriptors_scene);
+    vector<DMatch>matches;
+     matcher.match(descriptors_object,descriptors_scene,matches);
+        for (int i = 0; i <matches.size(); i++)
     {
         double dist = matches[i].distance;
         if (dist < min_dist) min_dist = dist;
         if (dist > max_dist) max_dist = dist;
     }
-     for (int i = 0; i < descriptors_object.rows; i++)
+        int n = matches.size();
+         vector<DMatch> good_matches;
+     for (int i = 0; i <matches.size(); i++)
     {
-        if (matches[i].distance < 3 * min_dist)
+        if (matches[i].distance < 5*( min_dist))
         {
             good_matches.push_back(matches[i]);
         }
     }
-     scene.clear();
-     Point temp=keypoints_scene[good_matches[0].trainIdx].pt;
-  int x_min=temp.x,x_max=temp.x;
-  int y_min=temp.y,y_max=temp.y;
+     vector<Point2f> scene;
+  int x_min=0,x_max=0;
+  int y_min=0,y_max=0;
+  int x = good_matches.size();
   for( int i = 0; i < good_matches.size(); i++ )
   {
          scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
-        if(scene[i].x<x_min)
-            x_min = scene[i].x;
-        if(scene[i].x>x_max)
-            x_max = scene[i].x;
-        if(scene[i].y<y_min)
-            y_min = scene[i].y;
-        if(scene[i].y>y_max)
-            y_max = scene[i].y;
+         if(i==0)
+         {
+             x_min=scene[i].x;
+             x_max=scene[i].x;
+             y_min = scene[i].y;
+             y_max=scene[i].y;
+         }
+         else
+         {
+            if(scene[i].x<x_min)
+               x_min = scene[i].x;
+            if(scene[i].x>x_max)
+               x_max = scene[i].x;
+            if(scene[i].y<y_min)
+               y_min = scene[i].y;
+            if(scene[i].y>y_max)
+               y_max = scene[i].y;
+         }
   }
-  Rect rec(Point(x_min+target.x,y_min+target.y),Point(x_max+target.x,y_max+target.y));
-  trackBox.center = Point((rec.x+rec.width)/2,(rec.y+rec.height)/2);
+  Rect rec(Point(x_min*width_raw+target.x,y_min*height_raw+target.y),Point(x_max*width_raw+target.x,y_max*height_raw+target.y));
+  trackBox.center = Point(rec.x+rec.width/2,rec.y+rec.height/2);
   trackBox.size.width = rec.width;
   trackBox.size.height = rec.height;
-  target  =rec;
+ // target = Rect((rec.x+rec.width/2+target.x)/2,(rec.y+rec.height/2+target.y)/2,(rec.width+target.width)/2,(target.height+rec.height)/2);
+ // target  = rec&Rect(0,0,640,480);
+  cout<<rec.x<<' '<<rec.y<<' '<<rec.width<<' '<<rec.height<<endl;
 
 
 }
