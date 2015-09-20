@@ -9,9 +9,9 @@ static Mat g_image = Mat::zeros(640, 640, CV_8UC3);
 static int g_trackObject = 0 ;
 static int num_of_lost = 0;
 vector<KeyPoint> keypoints_object;
-  SurfFeatureDetector dector;
-    SurfDescriptorExtractor extractor;
-    FlannBasedMatcher matcher;
+SurfFeatureDetector dector;
+SurfDescriptorExtractor extractor;
+FlannBasedMatcher matcher;
 
 
 
@@ -165,7 +165,7 @@ void TargetTracking::GetPredictPoint()
 {
     int weight= 0.5 ;//预测的点所占的比重
     predict_pt_.x = weight*statePt_.x +(1-weight)*trackBox.center.x;
-       predict_pt_.y = weight*statePt_.y +(1-weight)*trackBox.center.y;
+    predict_pt_.y = weight*statePt_.y +(1-weight)*trackBox.center.y;
 }
 
 
@@ -340,7 +340,7 @@ int TargetTracking::tracking()
                 {
                     int cols = backproj.cols, rows = backproj.rows, r = (MIN(cols, rows) + 5) / 6;
                    trackWindow = Rect(trackWindow.x - r, trackWindow.y - r,
-                       trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);//赋值给下一次查找的
+                   trackWindow.x + r, trackWindow.y + r) & Rect(0, 0, cols, rows);//赋值给下一次查找的
                 }
                  target = target_rect_&Rect(0,0,640,480);
                  circle( g_image,statePt_,5,CV_RGB(0,0,255),3);
@@ -348,17 +348,17 @@ int TargetTracking::tracking()
                  circle( g_image,Point(320,240),5,CV_RGB(255,0,0),3);
 
 
-               GetTargetWithPoints(rawframe(target));
-                if (backproj_mode_)
-                cvtColor(backproj, g_image, COLOR_GRAY2BGR);
-                 new_target_area_ = trackBox.size.area();
+            //   GetTargetWithPoints(rawframe(target));
+               if (backproj_mode_)
+               cvtColor(backproj, g_image, COLOR_GRAY2BGR);
+               new_target_area_ = trackBox.size.area();
                // g_trackObject = target_miss_config();
-                old_target_area_ = new_target_area_;
-                new_point_ = trackBox.center;
-                UpdateStablePoint();
-                old_point_ = new_point_;
-                ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
-                rectangle(g_image,target,Scalar(255,0,0),2,8);
+               old_target_area_ = new_target_area_;
+               new_point_ = trackBox.center;
+               UpdateStablePoint();
+               old_point_ = new_point_;
+               ellipse(g_image, trackBox, Scalar(0, 0, 255), 3, CV_AA);//画出椭圆目标区域
+               rectangle(g_image,target,Scalar(255,0,0),2,8);
 
                 if(!(frame_num%10))
                {
@@ -393,7 +393,7 @@ int TargetTracking::tracking()
 
                     }
                  }
-                // ImageWatersheds(target);
+                 // ImageWatersheds(target);
                  ptz_command_->PTZcontrol(Point(320,240),trackBox.center,frame_num);
                  trackWindow = target;
         }
@@ -452,7 +452,7 @@ int TargetTracking::tracking()
   g_selectObject = false;
   destroyAllWindows();
   g_trackObject = 0 ;
-return 0;
+  return 0;
 }
 
 
@@ -502,7 +502,7 @@ void TargetTracking::ImageWatersheds(Rect rec)
     inRange(binary, Scalar(0,40,20), Scalar(80,180,255), mask2);
     bitwise_or(mask1,mask2,binary);
     binary = opening(binary);
-  //  imshow("binary",binary);
+  //imshow("binary",binary);
     Mat fImage;
     Mat bImage;
     dilate(binary,bImage,cv::Mat(),cv::Point(-1,-1),6);
@@ -582,10 +582,12 @@ void  TargetTracking::GetTargetWithPoints(Mat &img)
   }
   Rect rec(Point(x_min*width_raw+target.x,y_min*height_raw+target.y),Point(x_max*width_raw+target.x,y_max*height_raw+target.y));
   trackBox.center = Point(rec.x+rec.width/2,rec.y+rec.height/2);
-  trackBox.size.width = rec.width;
-  trackBox.size.height = rec.height;
- // target = Rect((rec.x+rec.width/2+target.x)/2,(rec.y+rec.height/2+target.y)/2,(rec.width+target.width)/2,(target.height+rec.height)/2);
- // target  = rec&Rect(0,0,640,480);
+  if(rec.width>0&&rec.height>0)
+  {
+    trackBox.size.width = rec.width;
+    trackBox.size.height = rec.height;
+  }
+  target  = rec&Rect(0,0,640,480);
   cout<<rec.x<<' '<<rec.y<<' '<<rec.width<<' '<<rec.height<<endl;
 
 
